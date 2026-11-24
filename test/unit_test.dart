@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:jquery_ajax_lab/core/constants.dart';
 import 'package:jquery_ajax_lab/data/app_data.dart';
 import 'package:jquery_ajax_lab/models/exercise.dart';
 import 'package:jquery_ajax_lab/services/favorites_service.dart';
@@ -93,8 +94,18 @@ void main() {
 
     test('la progression est persistée', () async {
       final p = ProgressService.instance;
-      await p.markExercisePassed('ex-jq-1');
-      expect(p.isExercisePassed('ex-jq-1'), isTrue);
+      await p.markExercisePassed('ex-jquery-1');
+      await p.markSectionComplete('jquery-4-1');
+      final prefs = await SharedPreferences.getInstance();
+      final saved = prefs.getString(StorageKeys.progressJson)!;
+
+      // Comme au prochain lancement : mémoire vidée, stockage conservé.
+      await p.reset();
+      expect(p.isExercisePassed('ex-jquery-1'), isFalse);
+      await prefs.setString(StorageKeys.progressJson, saved);
+      await p.load();
+      expect(p.isExercisePassed('ex-jquery-1'), isTrue);
+      expect(p.currentSectionId, 'jquery-4-1');
     });
   });
 

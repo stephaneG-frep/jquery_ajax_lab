@@ -7,13 +7,13 @@ Application Android pédagogique (Flutter) pour apprendre le **Web, HTML/CSS/JS,
 ## Fonctionnalités
 
 - **5 onglets** : Accueil · Cours · Lab · Projets · Docs
-- **3 modules de cours** (20+ sections) : Fondations du Web, jQuery, AJAX & REST — contenus hors-ligne (HTML/CSS/JS, DOM, sélecteurs, événements, animations, `$.ajax`, fetch/async-await, JSON, REST)
-- **Exercices interactifs** (10+) : GUIDÉ / SEMI-GUIDÉ / AUTONOME, QCM ou code, indices progressifs (Indice 1 → Indice 2 → solution), validation pédagogique (jamais de simple « FAUX »)
-- **Explorateur AJAX** : mini-Postman (GET/POST/PUT/PATCH/DELETE, en-têtes, corps, exemples, gestion des erreurs, vue brute + jolie du JSON)
+- **12 modules de cours** (64 leçons) : bases du Web, HTML, JavaScript, jQuery, DOM, événements, animations, AJAX, HTTP, JSON, REST, jQuery vs JavaScript moderne — contenus hors-ligne (HTML/CSS/JS, DOM, sélecteurs, événements, animations, `$.ajax`, fetch/async-await, JSON, REST)
+- **Exercices interactifs** (38) : GUIDÉ / SEMI-GUIDÉ / AUTONOME, QCM ou code, indices progressifs (Indice 1 → Indice 2 → solution), validation pédagogique (jamais de simple « FAUX »)
+- **Explorateur AJAX** : mini-Postman (GET/POST/PUT/PATCH/DELETE, en-têtes, corps, exemples, gestion des erreurs, JSON mis en forme)
 - **Laboratoire** : éditeurs HTML/CSS/JS, console, aperçu WebView en direct avec **jQuery 3.7.1 embarqué**, exemples prêts à lancer
-- **Projets** (10+) : étapes guidées, indices, solutions et code final, dont le projet final « Tableau de bord AJAX »
-- **Docs** : fiches de référence, aide-mémoire jQuery, glossaire (plus de 20 entrées), recherche globale
-- **Explique-moi ce code** : sélectionnez du code, obtenez une explication pédagogique
+- **Projets** (10 mini-projets et 1 projet final) : étapes guidées, indices, solutions et code final, dont le projet final « Tableau de bord AJAX »
+- **Docs** : 39 fiches de référence, glossaire de 23 entrées, recherche globale
+- **Explique-moi ce code** : une explication ligne par ligne des codes des leçons
 - **Progression** globale et par catégorie, **favoris**, réglages (thème clair/sombre, taille du texte), mode d'emploi
 
 ## Captures d'écran

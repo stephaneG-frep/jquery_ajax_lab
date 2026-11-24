@@ -23,7 +23,7 @@ class HelpScreen extends StatelessWidget {
     (
       title: '3 · L\'onglet Cours',
       text: 'Le cours est découpé en modules, eux-mêmes découpés en leçons. '
-          'Suivez les leçons dans l\'ordre : chaque module se termine par des '
+          'Suivez les leçons dans l\'ordre : à partir du module 2, chacun propose des '
           'exercices.'
     ),
     (

@@ -24,7 +24,6 @@ class MiniProject {
   final String intro;
   final List<String> objectives;
   final List<ProjectTask> tasks;
-  final String starterCode;
   final String finalCode;
   final bool isFinalProject;
 
@@ -36,7 +35,6 @@ class MiniProject {
     required this.intro,
     required this.objectives,
     required this.tasks,
-    required this.starterCode,
     required this.finalCode,
     this.isFinalProject = false,
   });

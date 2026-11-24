@@ -47,11 +47,6 @@ List<MiniProject> allProjects() => [
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<button id="btn">Afficher / masquer</button>
-<div id="zone">
-  <p>Ce contenu peut être affiché ou masqué.</p>
-</div>''',
         finalCode: r'''<button id="btn">Afficher / masquer</button>
 <div id="zone">
   <p>Ce contenu peut être affiché ou masqué.</p>
@@ -120,17 +115,6 @@ $('#next').on('click', function () { afficher(index + 1); });
 $('#prev').on('click', function () { afficher(index - 1); });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<img id="grande" src="https://picsum.photos/400/250?1" alt="Photo">
-<div>
-  <button id="prev">◀ Précédent</button>
-  <button id="next">Suivant ▶</button>
-</div>
-<div id="vignettes">
-  <img class="mini" src="https://picsum.photos/400/250?1">
-  <img class="mini" src="https://picsum.photos/400/250?2">
-  <img class="mini" src="https://picsum.photos/400/250?3">
-</div>''',
         finalCode: r'''<img id="grande" src="https://picsum.photos/400/250?1" alt="Photo">
 <div>
   <button id="prev">◀ Précédent</button>
@@ -203,8 +187,6 @@ $('#prev').on('click', function () { afficher(index - 1); });
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<div id="menu"></div>''',
         finalCode: r'''<div id="menu"></div>
 
 <script>
@@ -278,14 +260,6 @@ $('#menu').on('click', '.titre-menu', function () {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<form id="form">
-  <input type="text" id="nom" placeholder="Nom">
-  <input type="email" id="email" placeholder="Email">
-  <button type="submit">Envoyer</button>
-</form>
-<p id="erreur"></p>
-<div id="resume"></div>''',
         finalCode: r'''<form id="form">
   <input type="text" id="nom" placeholder="Nom">
   <input type="email" id="email" placeholder="Email">
@@ -369,12 +343,6 @@ $('#form input').on('keyup', function () {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<form id="form">
-  <input id="tache" placeholder="Nouvelle tâche">
-  <button type="submit" id="ajouter">Ajouter</button>
-</form>
-<ul id="liste"></ul>''',
         finalCode: r'''<form id="form">
   <input id="tache" placeholder="Nouvelle tâche">
   <button type="submit" id="ajouter">Ajouter</button>
@@ -460,17 +428,6 @@ $('#liste').on('click', '.supprimer', function () {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<input id="recherche" placeholder="Rechercher…">
-<p id="compte"></p>
-<ul id="liste">
-  <li>JavaScript</li>
-  <li>jQuery</li>
-  <li>HTML</li>
-  <li>CSS</li>
-  <li>Python</li>
-  <li>PHP</li>
-</ul>''',
         finalCode: r'''<input id="recherche" placeholder="Rechercher…">
 <p id="compte"></p>
 <ul id="liste">
@@ -544,10 +501,6 @@ $('#recherche').on('keyup', function () {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<button id="charger">Charger les utilisateurs</button>
-<p id="etat"></p>
-<ul id="liste"></ul>''',
         finalCode: r'''<button id="charger">Charger les utilisateurs</button>
 <p id="etat"></p>
 <ul id="liste"></ul>
@@ -614,9 +567,6 @@ $('#resultat').text(
 );''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<button id="meteo">Voir la météo</button>
-<div id="resultat"></div>''',
         finalCode: r'''<button id="meteo">Voir la météo</button>
 <div id="resultat"></div>
 
@@ -701,14 +651,6 @@ $('#meteo').on('click', function () {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<select id="ressource">
-  <option value="https://jsonplaceholder.typicode.com/users">Utilisateurs</option>
-  <option value="https://jsonplaceholder.typicode.com/posts">Articles</option>
-  <option value="https://jsonplaceholder.typicode.com/todos">Tâches</option>
-</select>
-<button id="envoyer">ENVOYER</button>
-<pre id="sortie"></pre>''',
         finalCode: r'''<select id="ressource">
   <option value="https://jsonplaceholder.typicode.com/users">Utilisateurs</option>
   <option value="https://jsonplaceholder.typicode.com/posts">Articles</option>
@@ -777,10 +719,6 @@ enCours.forEach(function (t) {
 });''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<button id="charger">Charger le tableau de bord</button>
-<div id="stats"></div>
-<ul id="activite"></ul>''',
         finalCode: r'''<button id="charger">Charger le tableau de bord</button>
 <div id="stats"></div>
 <ul id="activite"></ul>
@@ -900,12 +838,6 @@ chargerDashboard();''',
 //          échec    → « Erreur sur … »''',
           ),
         ],
-        starterCode: r'''<!-- HTML -->
-<h1>Tableau de bord AJAX</h1>
-<button id="actualiser">Actualiser</button>
-<p id="etat"></p>
-<div id="stats"></div>
-<ul id="liste"></ul>''',
         finalCode: r'''<h1>Tableau de bord AJAX</h1>
 <button id="actualiser">Actualiser</button>
 <p id="etat"></p>

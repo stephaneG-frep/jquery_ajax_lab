@@ -503,6 +503,13 @@ class _Console extends StatelessWidget {
 
   const _Console({required this.logs, required this.onClear});
 
+  // Préfixes posés par la console du laboratoire (voir LabEngine).
+  static Color _color(String log) {
+    if (log.startsWith('Erreur')) return const Color(0xFFFF8A80);
+    if (log.startsWith('Avertissement') || log.startsWith('⚠')) return const Color(0xFFFFD180);
+    return Colors.white;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -556,8 +563,11 @@ class _Console extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Text(
                         '${i + 1} › ${logs[i]}',
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 12, fontFamily: 'monospace', height: 1.4),
+                        style: TextStyle(
+                            color: _color(logs[i]),
+                            fontSize: 12,
+                            fontFamily: 'monospace',
+                            height: 1.4),
                       ),
                     ),
                   ),

@@ -1,1 +1,0 @@
-Placez ici les captures d'écran (accueil.png, cours.png, section.png, exercice.png, lab.png, ajax.png, projets.png, docs.png, progression.png) référencées dans le README.

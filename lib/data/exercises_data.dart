@@ -128,7 +128,7 @@ List<Exercise> allExercises() => [
         level: ExerciseLevel.semiGuided,
         type: ExerciseType.code,
         objective: 'Supprimer la carte parente d\'un bouton.',
-        instructions: 'Depuis un bouton cliqué (représeté par \$(this)), remontez au parent .carte '
+        instructions: 'Depuis un bouton cliqué (représenté par \$(this)), remontez au parent .carte '
             'et supprimez-le. Écrivez la ligne jQuery complète.',
         hints: [
           'Une méthode cherche le parent le plus proche d\'un sélecteur.',
@@ -229,7 +229,7 @@ List<Exercise> allExercises() => [
         level: ExerciseLevel.semiGuided,
         type: ExerciseType.code,
         objective: 'Ajouter et retirer une classe.',
-        instructions: 'Sur l\'élément #carte, ajoutez la classe "active" puis retouvez-la (toggle). '
+        instructions: 'Sur l\'élément #carte, ajoutez la classe "active" si elle est absente, retirez-la sinon (toggle). '
             'Écrivez une ligne jQuery qui bascule la classe.',
         hints: [
           'Une seule méthode jQuery fait ce travail.',
