@@ -43,7 +43,7 @@ flutter run            # sur un appareil/émulateur connecté
 
 ```bash
 flutter analyze        # aucun problème attendu
-flutter test           # 97 tests (données, validation, HTTP, widgets, lab)
+flutter test           # 101 tests (données, validation, HTTP, widgets, lab)
 ```
 
 ### Construire l'APK de production
@@ -52,6 +52,9 @@ flutter test           # 97 tests (données, validation, HTTP, widgets, lab)
 flutter build apk --release
 # → build/app/outputs/flutter-apk/app-release.apk
 ```
+
+Sans clé de publication, l'APK est signé avec la clé de debug (suffisant pour un essai). Pour
+publier, copiez `android/key.properties.example` en `android/key.properties` et complétez-le.
 
 ## Structure du projet
 

@@ -91,6 +91,12 @@ class Exercise {
   /// Règle de validation pour les exercices de code.
   final ValidationRule? rule;
 
+  /// Page HTML sur laquelle essayer le code dans le laboratoire.
+  final String? labHtml;
+
+  /// Code à exécuter autour de la réponse, qui remplace `{code}`.
+  final String labWrapper;
+
   const Exercise({
     required this.id,
     required this.title,
@@ -106,7 +112,12 @@ class Exercise {
     this.choices,
     this.correctChoiceIndex,
     this.rule,
+    this.labHtml,
+    this.labWrapper = '{code}',
   });
+
+  /// Code à placer dans le laboratoire pour essayer [answer].
+  String labCode(String answer) => labWrapper.replaceFirst('{code}', answer.trim());
 
   /// Vérifie la structure d'une réponse libre (le code n'est pas exécuté).
   /// Retourne (valide, message pédagogique).

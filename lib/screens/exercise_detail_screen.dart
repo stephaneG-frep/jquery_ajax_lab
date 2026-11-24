@@ -79,8 +79,8 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => LabPage(
-          initialHtml: '<button id="btn">Tester</button>\n<p id="message"></p>',
-          initialJs: js,
+          initialHtml: ex.labHtml,
+          initialJs: ex.labCode(js),
         ),
       ),
     );

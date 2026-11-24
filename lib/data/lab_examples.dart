@@ -119,7 +119,9 @@ const List<LabPreset> labPresets = [
     success: function (users) {
       \$("#liste").empty();
       users.forEach(function (user) {
-        \$("#liste").append("<li><b>" + user.name + "</b> — " + user.email + "</li>");
+        \$("<li>").text(" — " + user.email)
+          .prepend(\$("<b>").text(user.name))
+          .appendTo("#liste");
       });
       \$("#etat").text(users.length + " utilisateurs chargés.");
     },

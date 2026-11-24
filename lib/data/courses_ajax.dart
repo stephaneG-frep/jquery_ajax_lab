@@ -77,11 +77,15 @@ List<CourseModule> ajaxModules() => [
   // 2. Traiter la réponse (data est déjà du JSON)
   \$('#liste').html('');
   data.forEach(function (user) {
-    \$('#liste').append('<li>' + user.name + '</li>');
+    \$('<li>').text(user.name).appendTo('#liste');
   });
 });''',
                 explanation: 'La fonction de rappel reçoit les données déjà parsées et les affiche.',
               ),
+              const WarningBlock(
+                  'Les données reçues ne sont pas de confiance : insérez-les avec .text(), jamais en '
+                  'les collant dans une chaîne HTML. Sinon, un nom contenant une balise <script> ou '
+                  '<img> pourrait exécuter du code chez vos visiteurs (faille XSS).'),
               const InfoBlock(
                   'L\'explorateur AJAX de l\'application vous montre chaque étape : status, temps, headers '
                   'et body — exactement le cycle ci-dessus.'),
@@ -203,7 +207,7 @@ List<CourseModule> ajaxModules() => [
     \$('#etat').text(data.length + ' utilisateurs chargés');
     \$('#liste').empty();
     data.forEach(function (u) {
-      \$('#liste').append('<li>' + u.name + '</li>');
+      \$('<li>').text(u.name).appendTo('#liste');
     });
   },
   error: function (xhr, statut, erreur) {
@@ -259,10 +263,10 @@ List<CourseModule> ajaxModules() => [
     success: function (users) {
       \$('#liste').empty();
       users.forEach(function (user) {
-        \$('#liste').append(
-          '<li data-id="' + user.id + '">' + user.name +
-          ' — ' + user.email + '</li>'
-        );
+        \$('<li>')
+          .attr('data-id', user.id)
+          .text(user.name + ' — ' + user.email)
+          .appendTo('#liste');
       });
       \$('#etat').text(users.length + ' utilisateurs affichés');
     },
@@ -891,7 +895,7 @@ function chargerTaches() {
   \$.get('/api/todos', function (todos) {
     \$('#liste').empty();
     todos.forEach(function (t) {
-      \$('#liste').append('<li data-id="' + t.id + '">' + t.title + '</li>');
+      \$('<li>').attr('data-id', t.id).text(t.title).appendTo('#liste');
     });
   });
 }

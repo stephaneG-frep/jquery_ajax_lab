@@ -474,13 +474,16 @@ $('#recherche').on('keyup', function () {
             title: 'La requête',
             instruction: 'Au clic, faites un \$.get vers '
                 '"https://jsonplaceholder.typicode.com/users" et affichez "Chargement…" pendant.',
-            hint: 'Affichez le message avant la requête, dans le callback.',
+            hint: 'Affichez le message avant la requête. Remplissez les <li> avec .text() : on ne colle '
+                'jamais dans du HTML des données reçues d\'un serveur.',
             solution: r'''$('#charger').on('click', function () {
   $('#etat').text('Chargement…');
   $.get('https://jsonplaceholder.typicode.com/users', function (users) {
     $('#liste').empty();
     users.forEach(function (u) {
-      $('#liste').append('<li><b>' + u.name + '</b> — ' + u.email + '</li>');
+      $('<li>').text(' — ' + u.email)
+        .prepend($('<b>').text(u.name))
+        .appendTo('#liste');
     });
     $('#etat').text(users.length + ' utilisateurs affichés.');
   });
@@ -493,7 +496,9 @@ $('#recherche').on('keyup', function () {
             solution: r'''$.get('https://jsonplaceholder.typicode.com/users', function (users) {
   $('#liste').empty();
   users.forEach(function (u) {
-    $('#liste').append('<li><b>' + u.name + '</b> — ' + u.email + '</li>');
+    $('<li>').text(' — ' + u.email)
+      .prepend($('<b>').text(u.name))
+      .appendTo('#liste');
   });
   $('#etat').text(users.length + ' utilisateurs affichés.');
 }).fail(function () {
@@ -511,7 +516,9 @@ $('#charger').on('click', function () {
   $.get('https://jsonplaceholder.typicode.com/users', function (users) {
     $('#liste').empty();
     users.forEach(function (u) {
-      $('#liste').append('<li><b>' + u.name + '</b> — ' + u.email + '</li>');
+      $('<li>').text(' — ' + u.email)
+        .prepend($('<b>').text(u.name))
+        .appendTo('#liste');
     });
     $('#etat').text(users.length + ' utilisateurs affichés.');
   }).fail(function () {
@@ -712,10 +719,10 @@ $('#envoyer').on('click', function () {
           ProjectTask(
             title: 'Lister les tâches en cours',
             instruction: 'Affichez dans #activite les 5 premières tâches non terminées.',
-            hint: 'filter puis slice(0, 5), puis append d\'un <li> par tâche.',
+            hint: 'filter puis slice(0, 5), puis un <li> par tâche, rempli avec .text().',
             solution: r'''var enCours = todos.filter(function (t) { return !t.completed; }).slice(0, 5);
 enCours.forEach(function (t) {
-  $('#activite').append('<li>' + t.title + '</li>');
+  $('<li>').text(t.title).appendTo('#activite');
 });''',
           ),
         ],
@@ -735,7 +742,7 @@ $('#charger').on('click', function () {
       );
       $('#activite').empty();
       enCours.forEach(function (t) {
-        $('#activite').append('<li>' + t.title + '</li>');
+        $('<li>').text(t.title).appendTo('#activite');
       });
     });
   });
@@ -778,10 +785,10 @@ $('#charger').on('click', function () {
   $('#liste').empty();
   $.get('https://jsonplaceholder.typicode.com/users', function (users) {
     users.forEach(function (u) {
-      $('#liste').append(
-        '<li data-id="' + u.id + '"><b>' + u.name + '</b> — ' + u.email +
-        ' <button class="detail">Détail</button></li>'
-      );
+      $('<li>').attr('data-id', u.id).text(' — ' + u.email + ' ')
+        .prepend($('<b>').text(u.name))
+        .append('<button class="detail">Détail</button>')
+        .appendTo('#liste');
     });
     $('#etat').text(users.length + ' utilisateurs chargés.');
   }).fail(function () {
@@ -803,10 +810,10 @@ chargerDashboard();''',
       '<b>' + faites + '</b> / <b>' + todos.length + '</b> tâches terminées'
     );
     users.forEach(function (u) {
-      $('#liste').append(
-        '<li data-id="' + u.id + '"><b>' + u.name + '</b> — ' + u.email +
-        ' <button class="detail">Détail</button></li>'
-      );
+      $('<li>').attr('data-id', u.id).text(' — ' + u.email + ' ')
+        .prepend($('<b>').text(u.name))
+        .append('<button class="detail">Détail</button>')
+        .appendTo('#liste');
     });
     $('#etat').text('Tableau de bord à jour.');
   }).fail(function () { $('#etat').text('Erreur sur les tâches.'); });
@@ -856,10 +863,10 @@ function chargerDashboard() {
         '<b>' + faites + '</b> / <b>' + todos.length + '</b> tâches terminées'
       );
       users.forEach(function (u) {
-        $('#liste').append(
-          '<li data-id="' + u.id + '"><b>' + u.name + '</b> — ' + u.email +
-          ' <button class="detail">Détail</button></li>'
-        );
+        $('<li>').attr('data-id', u.id).text(' — ' + u.email + ' ')
+          .prepend($('<b>').text(u.name))
+          .append('<button class="detail">Détail</button>')
+          .appendTo('#liste');
       });
       $('#etat').text('Tableau de bord à jour.');
     }).fail(function () {

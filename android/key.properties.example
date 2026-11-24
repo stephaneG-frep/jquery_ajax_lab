@@ -1,0 +1,6 @@
+# Copiez ce fichier en android/key.properties puis complétez-le.
+# key.properties est ignoré par Git : ne le partagez jamais.
+storeFile=/chemin/vers/jquery_ajax_lab.jks
+storePassword=
+keyAlias=upload
+keyPassword=

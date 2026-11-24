@@ -67,6 +67,8 @@ List<Exercise> allExercises() => [
 }''',
         solutionExplanation: 'function déclare la fonction, return renvoie le résultat. '
             'Le paramètre nom est utilisé dans la concaténation.',
+        labHtml: r'''<button onclick="$('#message').text(saluer('Alice'))">Appeler saluer('Alice')</button>
+<p id="message"></p>''',
         rule: const ValidationRule(
           patterns: [
             r"function saluer\(\w+\)\{|saluer=function ?\w*\(\w+\)\{|saluer=\(?\w+\)?=>",
@@ -112,6 +114,7 @@ List<Exercise> allExercises() => [
         solution: r'''$('#demo').text('Modifié !');''',
         solutionExplanation: '\$( "#demo" ) sélectionne l\'élément par son id, .text("Modifié !") '
             'remplace son contenu textuel.',
+        labHtml: r'''<p id="demo">Texte</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#demo'\)\.text\('Modifié ?!'\)",
@@ -137,6 +140,11 @@ List<Exercise> allExercises() => [
         solution: r'''$(this).closest('.carte').remove();''',
         solutionExplanation: 'closest(".carte") remonte jusqu\'au parent qui a la classe carte, '
             'remove() le supprime du DOM.',
+        labHtml: r'''<div class="carte">Carte 1 <button class="supprimer">Supprimer</button></div>
+<div class="carte">Carte 2 <button class="supprimer">Supprimer</button></div>''',
+        labWrapper: r'''$('.supprimer').on('click', function () {
+  {code}
+});''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\(this\)\.(?:closest\('\w*\.carte'\)|parents\('\w*\.carte'\)\.(?:first\(\)|eq\(0\)))\.remove\(\)",
@@ -163,6 +171,7 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'Le callback de .ready() s\'exécute quand le DOM est construit, '
             'donc quand la page est prête.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\(document\)\.ready\(<fn>|<jq>\(<fn>",
@@ -210,6 +219,8 @@ List<Exercise> allExercises() => [
         solution: r'''$('#resultat').text(Number($('#age').val()) * 2);''',
         solutionExplanation: 'val() renvoie une chaîne : Number() la convertit, puis on multiplie par '
             '2 et on écrit le résultat avec text().',
+        labHtml: r'''<input id="age" value="21">
+<p id="resultat"></p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#resultat'\)\.(?:text|html)\(",
@@ -238,6 +249,11 @@ List<Exercise> allExercises() => [
         solution: r'''$('#carte').toggleClass('active');''',
         solutionExplanation: 'toggleClass("active") ajoute la classe si elle est absente, et la '
             'retire si elle est présente.',
+        labHtml: r'''<style>
+  #carte { padding: 16px; border: 1px solid #999; }
+  .active { background: #fff3c4; }
+</style>
+<div id="carte">Carte (jaune quand elle est active)</div>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#carte'\)\.toggleClass\('active'\)",
@@ -261,6 +277,9 @@ List<Exercise> allExercises() => [
         ],
         solution: r'''$('#liste').append('<li>Nouveau</li>');''',
         solutionExplanation: 'append() insère le <li> en dernier enfant de #liste.',
+        labHtml: r'''<ul id="liste">
+  <li>Premier</li>
+</ul>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#liste'\)\.append\(|\.appendTo\((?:<jq>\()?'\w*#liste'",
@@ -309,6 +328,11 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'preventDefault() annule le rechargement : indispensable avant toute '
             'requête AJAX depuis un formulaire.',
+        labHtml: r'''<form id="form">
+  <input placeholder="Nom">
+  <button type="submit">Envoyer</button>
+</form>
+<p>Si la page ne se recharge pas, c'est gagné.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#form'\)\.(?:on\('submit',|submit\()<fn>.*\.preventDefault\(\)|^\w+\.preventDefault\(\);?$",
@@ -336,6 +360,8 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'keyup se déclenche à chaque relâchement de touche. \$(this) est le '
             'champ, val() sa valeur.',
+        labHtml: r'''<input id="recherche" placeholder="Tapez ici">
+<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#recherche'\)\.(?:on\('keyup',|keyup\()<cb>",
@@ -364,6 +390,8 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: '.on("click", callback) attache le gestionnaire. Le callback modifie '
             'le texte du message.',
+        labHtml: r'''<button id="bouton">Cliquer</button>
+<p id="message"></p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#bouton'\)\.on\('click',<cb>",
@@ -390,6 +418,9 @@ List<Exercise> allExercises() => [
   $(this).hide();
 });''',
         solutionExplanation: 'Le clic agit sur le bouton précis : \$(this) est l\'élément déclencheur.',
+        labHtml: r'''<button class="bouton">Un</button>
+<button class="bouton">Deux</button>
+<button class="bouton">Trois</button>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*\.bouton'\)\.(?:on\('click',|click\()<cb>",
@@ -418,6 +449,11 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'Le sélecteur "li" en second argument délègue : jQuery écoute le clic '
             'sur la liste mais n\'agit que si la cible est un <li>.',
+        labHtml: r'''<style>.fait { text-decoration: line-through; }</style>
+<button onclick="$('#liste').append('<li>Ajouté après coup</li>')">Ajouter un élément</button>
+<ul id="liste">
+  <li>Présent au départ</li>
+</ul>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#liste'\)\.on\('click','li',<cb>",
@@ -446,6 +482,8 @@ List<Exercise> allExercises() => [
   $('#zone').toggle(300);
 });''',
         solutionExplanation: 'toggle() bascule la visibilité ; 300 est la durée en millisecondes.',
+        labHtml: r'''<button id="btn">Afficher / masquer</button>
+<div id="zone">La zone</div>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#btn'\)\.(?:on\('click',|click\()<cb>",
@@ -473,6 +511,8 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'Le callback de fadeOut s\'exécute après l\'animation : c\'est le bon '
             'moment pour retirer l\'élément.',
+        labHtml: r'''<div id="banner">Bannière qui va disparaître</div>
+<p>Touchez « Exécuter » pour recommencer.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#banner'\)\.fadeOut\(500,<cb>",
@@ -500,6 +540,8 @@ List<Exercise> allExercises() => [
   $('#panneau').slideToggle(300);
 });''',
         solutionExplanation: 'slideToggle déplie/replie le panneau en 300 ms.',
+        labHtml: r'''<button id="btn">Ouvrir / fermer</button>
+<div id="panneau" style="background: #eef2ff; padding: 16px;">Le panneau</div>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#btn'\)\.(?:on\('click',|click\()<cb>",
@@ -523,6 +565,7 @@ List<Exercise> allExercises() => [
         ],
         solution: r'''$('#boite').animate({ left: '+=150px' }, 800);''',
         solutionExplanation: 'animate anime la propriété numérique left de 150 px en 800 ms.',
+        labHtml: r'''<div id="boite" style="position: relative; width: 60px; height: 60px; background: #3D5AFE;"></div>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\('\w*#boite'\)\.animate\(\{'?left'?:'\+=150(?:px)?',?\},(?:800\b|\{duration:800\b)",
@@ -554,6 +597,7 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'L\'objet d\'options décrit toute la requête ; success est appelé avec '
             'les données parsées.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.ajax\(",
@@ -584,6 +628,7 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: '\$.get(url, callback) reçoit directement les données JSON transformées '
             'en objet.',
+        labHtml: r'''<h2 id="titre">(le titre viendra ici)</h2>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.get\('https://jsonplaceholder\.typicode\.com/posts/1'",
@@ -615,6 +660,7 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'L\'option error est appelée si la requête échoue : c\'est la moitié '
             'pédagogique de toute requête.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.(?:ajax|get)\(",
@@ -666,6 +712,13 @@ List<Exercise> allExercises() => [
 });''',
         solutionExplanation: 'Content-Type annonce du JSON au serveur, JSON.stringify convertit '
             'l\'objet en texte.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+// Affiche chaque requête dans la console
+$(document).ajaxComplete(function (e, xhr, options) {
+  console.log(options.type, options.url, '→', xhr.status);
+});
+</script>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.ajax\(",
@@ -737,6 +790,10 @@ List<Exercise> allExercises() => [
         ],
         solution: r'''console.log(data.name);''',
         solutionExplanation: 'data.name lit la valeur de la clé name de l\'objet data.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+var data = { id: 1, name: 'Alice' };
+</script>''',
         rule: const ValidationRule(
           patterns: [
             r"console\.log\(data(?:\.name\b|\['name'\])",
@@ -801,6 +858,11 @@ List<Exercise> allExercises() => [
         ],
         solution: r'''const objet = JSON.parse(texte);''',
         solutionExplanation: 'JSON.parse() lit le texte JSON et renvoie l\'objet correspondant.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<p>Ajoutez un console.log() de votre objet pour le voir.</p>
+<script>
+var texte = '{"nom": "Alice", "age": 30}';
+</script>''',
         rule: const ValidationRule(
           patterns: [
             r"(?:JSON\.parse|<jq>\.parseJSON)\(texte\)",
@@ -877,6 +939,20 @@ $.ajax({ url: '/api/todos/1', method: 'PATCH', data: { done: true } });
 $.ajax({ url: '/api/todos/1', method: 'DELETE' });''',
         solutionExplanation: 'GET lit, POST crée, PATCH modifie partiellement, DELETE supprime. '
             'L\'URL identifie la ressource.',
+        labHtml: r'''<p>Requêtes reçues par le serveur simulé :</p>
+<ol id="journal"></ol>
+<script>
+// Faux serveur : note chaque requête au lieu de l'envoyer
+$.ajaxTransport('+*', function (options) {
+  return {
+    send: function (headers, done) {
+      $('<li>').text(options.type + ' ' + options.url).appendTo('#journal');
+      done(200, 'OK', { text: '{}' });
+    },
+    abort: function () {}
+  };
+});
+</script>''',
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.(?:get|getJSON)\('/api/todos/?'|<jq>\.ajax\(\{(?=[^;]*'/api/todos/?')[^;]*'GET'",
@@ -908,6 +984,7 @@ $.ajax({ url: '/api/todos/1', method: 'DELETE' });''',
   .then(data => console.log(data));''',
         solutionExplanation: 'fetch récupère la réponse, le premier then l\'extrait en JSON, le '
             'second affiche les données.',
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"\bfetch\('https://jsonplaceholder\.typicode\.com/users/?'\)",
@@ -938,6 +1015,11 @@ $.ajax({ url: '/api/todos/1', method: 'DELETE' });''',
 }''',
         solutionExplanation: 'async marque la fonction, await suspend jusqu\'au résultat : le code '
             'se lit dans l\'ordre.',
+        labHtml: r'''<button onclick="charger()">Appeler charger()</button>
+<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+var url = 'https://jsonplaceholder.typicode.com/users';
+</script>''',
         rule: const ValidationRule(
           patterns: [
             r"\basync function charger\(|\bcharger=async\b",
@@ -973,6 +1055,8 @@ $.ajax({ url: '/api/todos/1', method: 'DELETE' });''',
 }''',
         solutionExplanation: 'Toute erreur (réseau, HTTP, JSON) est capturée par catch et '
             'journalisée.',
+        labHtml: r'''<button onclick="charger()">Appeler charger()</button>
+<p>Le résultat s'affiche dans la console, en bas.</p>''',
         rule: const ValidationRule(
           patterns: [
             r"\basync function charger\(|\bcharger=async\b",
