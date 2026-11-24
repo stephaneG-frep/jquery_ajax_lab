@@ -74,6 +74,7 @@ List<CourseModule> jqueryModules() => [
               const WarningBlock(
                   'Sans ce bloc, votre code peut chercher un élément pas encore créé et ne rien trouver. '
                   'C\'est l\'erreur n°1 des débutants.'),
+              const ExerciseLinkBlock('ex-jquery-3'),
             ],
           ),
           CourseSection(
@@ -183,6 +184,41 @@ List<CourseModule> jqueryModules() => [
                     'je la supprime ». Chaque méthode transforme la sélection.',
               ),
               const ExerciseLinkBlock('ex-jquery-2'),
+            ],
+          ),
+          CourseSection(
+            id: 'jquery-4-6',
+            moduleId: 'jquery',
+            order: 6,
+            title: r"Parcourir et tester : .each() et .is()",
+            blocks: [
+              const ParagraphBlock(
+                  r"La plupart des méthodes jQuery agissent sur **toute** la sélection. Pour traiter chaque élément séparément, on utilise **.each()**."),
+              const CodeBlock(
+                r'''$('#liste li').each(function (index) {
+  console.log(index, $(this).text());
+});''',
+                explanation: r"La fonction est appelée une fois par élément : index vaut 0, 1, 2… et $(this) est l'élément en cours.",
+              ),
+              const InfoBlock(
+                  r"Pour s'arrêter avant la fin, écrivez return false dans la fonction."),
+              const ParagraphBlock(
+                  r"**.is()** répond par vrai ou faux : l'élément correspond-il au sélecteur ?"),
+              const CodeBlock(
+                r'''$('#zone').is(':visible');    // est-elle affichée ?
+$('#option').is(':checked');  // la case est-elle cochée ?
+$('#carte').is('.active');    // a-t-elle la classe active ?''',
+                explanation: r"Le résultat s'utilise directement dans un if.",
+              ),
+              const CodeBlock(
+                r'''if ($('#option').is(':checked')) {
+  $('#message').text('Option activée');
+}''',
+                explanation: r"On agit seulement si la case est cochée.",
+              ),
+              const TipBlock(
+                  r"Pas besoin de .each() pour une action commune : $('li').hide() masque déjà tous les <li>."),
+              const ExerciseLinkBlock('ex-jquery-4'),
             ],
           ),
         ],
@@ -577,6 +613,75 @@ const li = \$('<li>').text('Nouvel item').addClass('item');
               const ExerciseLinkBlock('ex-events-5'),
             ],
           ),
+          CourseSection(
+            id: 'events-6-6',
+            moduleId: 'events',
+            order: 6,
+            title: r"Le clavier : e.key",
+            blocks: [
+              const ParagraphBlock(
+                  r"L'objet événement indique la touche pressée dans **e.key**."),
+              const CodeBlock(
+                r'''$('#champ').on('keydown', function (e) {
+  console.log(e.key); // 'a', 'Enter', 'Escape', 'ArrowUp'…
+});''',
+                explanation: r"keydown se déclenche à l'appui, keyup au relâchement.",
+              ),
+              const CodeBlock(
+                r'''$('#champ').on('keydown', function (e) {
+  if (e.key === 'Enter') {
+    $('#message').text('Validé !');
+  }
+  if (e.key === 'Escape') {
+    $(this).val('');
+  }
+});''',
+                explanation: r"Entrée valide, Échap vide le champ.",
+              ),
+              const WarningBlock(
+                  r"N'utilisez plus keypress ni e.keyCode : ils sont obsolètes. Le duo keydown et e.key les remplace."),
+              const InfoBlock(
+                  r"Sur téléphone, certains claviers n'indiquent pas la touche exacte. Pour suivre une saisie, préférez l'événement input."),
+              const ExerciseLinkBlock('ex-events-6'),
+            ],
+          ),
+          CourseSection(
+            id: 'events-6-7',
+            moduleId: 'events',
+            order: 7,
+            title: r"Propagation, .off(), .one() et .trigger()",
+            blocks: [
+              const ParagraphBlock(
+                  r"Un clic sur un bouton **remonte** à ses parents : c'est la propagation. Elle permet la délégation, mais peut gêner."),
+              const CodeBlock(
+                r'''$('#carte').on('click', function () {
+  console.log('carte');
+});
+$('#bouton').on('click', function (e) {
+  e.stopPropagation(); // le clic ne remonte pas à #carte
+  console.log('bouton');
+});''',
+                explanation: r"Sans stopPropagation(), un clic sur le bouton afficherait aussi « carte ».",
+              ),
+              const BulletsBlock([
+                r"**.off('click')** retire les gestionnaires de clic.",
+                r"**.one('click', f)** installe un gestionnaire qui ne sert qu'une fois.",
+                r"**.trigger('click')** déclenche l'événement par le code.",
+              ]),
+              const CodeBlock(
+                r'''$('#btn').one('click', function () {
+  console.log('Une seule fois');
+});
+
+$('#btn').off('click');       // plus aucun clic écouté
+$('#form').trigger('submit'); // comme si on envoyait le formulaire''',
+                explanation: r"one() équivaut à un .on() suivi d'un .off() au premier déclenchement.",
+              ),
+              const TipBlock(
+                  r"Nommez vos événements pour ne retirer que les vôtres : .on('click.menu', f) puis .off('click.menu')."),
+              const ExerciseLinkBlock('ex-events-7'),
+            ],
+          ),
         ],
       ),
       CourseModule(
@@ -726,6 +831,35 @@ const li = \$('<li>').text('Nouvel item').addClass('item');
               const TipBlock(
                   'Règle : ne placez PAS la suite du programme juste après l\'appel d\'animation — elle '
                   's\'exécuterait avant la fin. Utilisez le callback.'),
+            ],
+          ),
+          CourseSection(
+            id: 'anim-7-6',
+            moduleId: 'anim',
+            order: 6,
+            title: r"Maîtriser la file : .stop()",
+            blocks: [
+              const ParagraphBlock(
+                  r"jQuery met les animations d'un élément **en file d'attente**. Dix clics rapides donnent dix animations à la suite, même quand l'utilisateur a fini."),
+              const CodeBlock(
+                r'''$('#btn').on('click', function () {
+  $('#zone').stop().slideToggle(300);
+});''',
+                explanation: r"stop() interrompt l'animation en cours, puis la nouvelle démarre aussitôt.",
+              ),
+              const ParagraphBlock(
+                  r"stop() accepte deux options, vraies ou fausses : **vider la file** et **aller à la fin**."),
+              const CodeBlock(
+                r'''$('#zone').stop();           // arrête l'animation en cours
+$('#zone').stop(true);       // … et vide la file d'attente
+$('#zone').stop(true, true); // … et saute à l'état final''',
+                explanation: r"Par défaut, les deux options valent false.",
+              ),
+              const TipBlock(
+                  r"Pour un menu au survol, .stop(true) évite que le menu continue à s'ouvrir et se fermer tout seul."),
+              const InfoBlock(
+                  r"$('#zone').is(':animated') indique si une animation est en cours."),
+              const ExerciseLinkBlock('ex-anim-5'),
             ],
           ),
         ],

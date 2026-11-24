@@ -7,8 +7,9 @@ Application Android pédagogique (Flutter) pour apprendre le **Web, HTML/CSS/JS,
 ## Fonctionnalités
 
 - **5 onglets** : Accueil · Cours · Lab · Projets · Docs
-- **12 modules de cours** (64 leçons) : bases du Web, HTML, JavaScript, jQuery, DOM, événements, animations, AJAX, HTTP, JSON, REST, jQuery vs JavaScript moderne — contenus hors-ligne (HTML/CSS/JS, DOM, sélecteurs, événements, animations, `$.ajax`, fetch/async-await, JSON, REST)
-- **Exercices interactifs** (38) : GUIDÉ / SEMI-GUIDÉ / AUTONOME, QCM ou code, indices progressifs (Indice 1 → Indice 2 → solution), validation pédagogique (jamais de simple « FAUX »)
+- **12 modules de cours** (75 leçons) : bases du Web, HTML, JavaScript, jQuery, DOM, événements, animations, AJAX, HTTP, JSON, REST, jQuery vs JavaScript moderne — contenus hors-ligne (HTML/CSS/JS, DOM, sélecteurs, événements, animations, `$.ajax`, fetch/async-await, JSON, REST)
+- **Quiz** : 5 questions par module (60), explications et meilleur score
+- **Exercices interactifs** (54) : GUIDÉ / SEMI-GUIDÉ / AUTONOME, QCM ou code, indices progressifs (Indice 1 → Indice 2 → solution), validation pédagogique (jamais de simple « FAUX »)
 - **Explorateur AJAX** : mini-Postman (GET/POST/PUT/PATCH/DELETE, en-têtes, corps, exemples, gestion des erreurs, JSON mis en forme)
 - **Laboratoire** : éditeurs HTML/CSS/JS, console, aperçu WebView en direct avec **jQuery 3.7.1 embarqué**, exemples prêts à lancer
 - **Projets** (10 mini-projets et 1 projet final) : étapes guidées, indices, solutions et code final, dont le projet final « Tableau de bord AJAX »
@@ -24,6 +25,7 @@ Application Android pédagogique (Flutter) pour apprendre le **Web, HTML/CSS/JS,
 | Liste des cours | ![Cours](docs/captures/cours.png) |
 | Déroulé d'un cours | ![Cours](docs/captures/section.png) |
 | Exercice | ![Exercice](docs/captures/exercice.png) |
+| Quiz | ![Quiz](docs/captures/quiz.png) |
 | Laboratoire | ![Laboratoire](docs/captures/lab.png) |
 | Explorateur AJAX | ![Explorateur AJAX](docs/captures/ajax.png) |
 | Projets | ![Projets](docs/captures/projets.png) |
@@ -43,7 +45,7 @@ flutter run            # sur un appareil/émulateur connecté
 
 ```bash
 flutter analyze        # aucun problème attendu
-flutter test           # 101 tests (données, validation, HTTP, widgets, lab)
+flutter test           # 141 tests (données, validation, quiz, HTTP, widgets, lab)
 ```
 
 ### Construire l'APK de production
@@ -64,7 +66,7 @@ lib/
 ├── core/         # constantes et citations
 ├── data/         # données pédagogiques (cours, exercices, projets, exemples, docs, glossaire)
 ├── models/       # modèles (Exercise, ContentBlock, Project, Snippet, …)
-├── screens/      # 15 écrans
+├── screens/      # 16 écrans
 ├── services/     # persistance (progression, favoris, réglages), HTTP, moteur du lab
 ├── utils/        # explication de code, helpers
 └── widgets/      # composants réutilisables (blocs de cours, vue de code, kit)

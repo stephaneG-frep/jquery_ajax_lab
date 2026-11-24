@@ -317,6 +317,7 @@ Content-Type: application/json
               const WarningBlock(
                   'Un id doit être unique. Si vous répétez un id, jQuery ne sélectionnera que le premier '
                   'élément trouvé — source fréquente de bugs !'),
+              const ExerciseLinkBlock('ex-html-2'),
             ],
           ),
           CourseSection(
@@ -405,6 +406,7 @@ console.log(typeof chiffre); // → number''',
               const TipBlock(
                   'Quand jQuery est chargé, la variable \$ est globale. C\'est une fonction, donc un objet de '
                   'type function — vous l\'utiliserez sans réfléchir à sa nature.'),
+              const ExerciseLinkBlock('ex-js-2'),
             ],
           ),
           CourseSection(
@@ -480,6 +482,7 @@ console.log(utilisateurs[1].nom); // → Bob''',
               const TipBlock(
                   'Une réponse d\'API JSON est souvent un tableau d\'objets. Savoir lire cette structure '
                   'est la clé du module JSON.'),
+              const ExerciseLinkBlock('ex-js-5'),
             ],
           ),
           CourseSection(
@@ -522,6 +525,7 @@ if (nom === 'Alice' && age > 18) {
               const WarningBlock(
                   'Préférez === à == en JavaScript. === compare la valeur ET le type, ce qui évite les '
                   'surprises comme 5 == "5".'),
+              const ExerciseLinkBlock('ex-js-4'),
             ],
           ),
           CourseSection(
@@ -565,6 +569,7 @@ console.log(saluer2('Bob'));   // → Bonjour Bob !''',
               const TipBlock(
                   'jQuery fonctionne entièrement avec des callbacks : événements, animations et AJAX '
                   'utilisent ce mécanisme que vous venez d\'apprendre.'),
+              const ExerciseLinkBlock('ex-js-1'),
             ],
           ),
           CourseSection(
@@ -612,6 +617,89 @@ li.textContent = 'Nouvel élément';
 liste.appendChild(li);''',
                 note: 'jQuery réduit plusieurs lignes à une seule. Vous comprenez maintenant la valeur de la bibliothèque.',
               ),
+            ],
+          ),
+          CourseSection(
+            id: 'js-3-7',
+            moduleId: 'js',
+            order: 7,
+            title: r"Répéter : for, while et forEach",
+            blocks: [
+              const ParagraphBlock(
+                  r"Une **boucle** répète un bloc de code. La boucle **for** convient quand on connaît le nombre de tours."),
+              const CodeBlock(
+                r'''for (let i = 1; i <= 3; i++) {
+  console.log('Tour ' + i);
+}
+// → Tour 1, Tour 2, Tour 3''',
+                explanation: r"Trois parties : le départ (i = 1), la condition (i <= 3) et l'étape (i++).",
+              ),
+              const ParagraphBlock(
+                  r"La boucle **while** répète tant qu'une condition est vraie."),
+              const CodeBlock(
+                r'''let reste = 10;
+while (reste > 0) {
+  reste = reste - 4;
+}
+console.log(reste); // → -2''',
+                explanation: r"La condition est testée avant chaque tour.",
+              ),
+              const ParagraphBlock(
+                  r"Pour parcourir un tableau, **for…of** et **forEach()** sont plus lisibles."),
+              const CodeBlock(
+                r'''const fruits = ['pomme', 'poire'];
+
+for (const fruit of fruits) {
+  console.log(fruit);
+}
+
+fruits.forEach(function (fruit, index) {
+  console.log(index, fruit);
+});''',
+                explanation: r"forEach() donne aussi l'index de chaque élément.",
+              ),
+              const WarningBlock(
+                  r"Une condition qui reste toujours vraie crée une boucle infinie : la page se bloque. Vérifiez que chaque tour rapproche de la fin."),
+              const ExerciseLinkBlock('ex-js-3'),
+            ],
+          ),
+          CourseSection(
+            id: 'js-3-8',
+            moduleId: 'js',
+            order: 8,
+            title: r"Transformer un tableau : map, filter, reduce",
+            blocks: [
+              const ParagraphBlock(
+                  r"Trois méthodes remplacent la plupart des boucles sur un tableau. Elles **ne modifient pas** le tableau d'origine."),
+              const BulletsBlock([
+                r"**map()** transforme chaque élément.",
+                r"**filter()** garde certains éléments.",
+                r"**reduce()** combine tout en une seule valeur.",
+              ]),
+              const CodeBlock(
+                r'''const prix = [10, 25, 40];
+
+const ttc = prix.map(p => p * 1.2);         // → [12, 30, 48]
+const chers = prix.filter(p => p > 20);     // → [25, 40]
+const total = prix.reduce((somme, p) => somme + p, 0); // → 75''',
+                explanation: r"map garde la même taille, filter réduit, reduce donne une seule valeur.",
+              ),
+              const ParagraphBlock(
+                  r"C'est très utile avec les tableaux d'objets reçus d'une API :"),
+              const CodeBlock(
+                r'''const users = [
+  { nom: 'Alice', age: 30 },
+  { nom: 'Bob', age: 16 }
+];
+
+const noms = users.map(u => u.nom);              // → ['Alice', 'Bob']
+const majeurs = users.filter(u => u.age >= 18);  // → [{ nom: 'Alice', … }]''',
+                explanation: r"On peut enchaîner : users.filter(…).map(…).",
+              ),
+              const TipBlock(
+                  r"Dans reduce(), n'oubliez pas la valeur de départ (ici 0) : sans elle, un tableau vide provoque une erreur."),
+              const ExerciseLinkBlock('ex-js-6'),
+              const ExerciseLinkBlock('ex-js-7'),
             ],
           ),
         ],

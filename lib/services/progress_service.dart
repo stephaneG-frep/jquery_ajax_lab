@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 
 /// Progression locale de l'apprenant : sections terminées, exercices réussis,
-/// projets terminés, position actuelle.
+/// scores de quiz, projets terminés, position actuelle.
 class ProgressService extends ChangeNotifier {
   ProgressService._();
 
@@ -15,6 +15,7 @@ class ProgressService extends ChangeNotifier {
   final Set<String> _completedSections = {};
   final Set<String> _passedExercises = {};
   final Set<String> _completedProjects = {};
+  final Map<String, int> _quizScores = {};
 
   String? _currentSectionId;
   String? _currentExerciseId;
@@ -44,6 +45,9 @@ class ProgressService extends ChangeNotifier {
         _completedProjects
           ..clear()
           ..addAll((map['projects'] as List<dynamic>? ?? const []).cast<String>());
+        _quizScores
+          ..clear()
+          ..addAll((map['quizzes'] as Map<String, dynamic>? ?? const {}).cast<String, int>());
         _currentSectionId = map['currentSection'] as String?;
         _currentExerciseId = map['currentExercise'] as String?;
         _currentProjectId = map['currentProject'] as String?;
@@ -79,6 +83,17 @@ class ProgressService extends ChangeNotifier {
     }
   }
 
+  /// Meilleur score obtenu au quiz d'un module, ou null s'il n'a pas été fait.
+  int? bestQuizScore(String moduleId) => _quizScores[moduleId];
+
+  /// Enregistre un score de quiz ; seul le meilleur est conservé.
+  Future<void> recordQuizScore(String moduleId, int score) async {
+    if (score <= (_quizScores[moduleId] ?? -1)) return;
+    _quizScores[moduleId] = score;
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> setCurrentSection(String sectionId) async {
     _currentSectionId = sectionId;
     notifyListeners();
@@ -94,6 +109,7 @@ class ProgressService extends ChangeNotifier {
     _completedSections.clear();
     _passedExercises.clear();
     _completedProjects.clear();
+    _quizScores.clear();
     _currentSectionId = null;
     _currentExerciseId = null;
     _currentProjectId = null;
@@ -110,6 +126,7 @@ class ProgressService extends ChangeNotifier {
           'sections': _completedSections.toList(),
           'exercises': _passedExercises.toList(),
           'projects': _completedProjects.toList(),
+          'quizzes': _quizScores,
           'currentSection': _currentSectionId,
           'currentExercise': _currentExerciseId,
           'currentProject': _currentProjectId,

@@ -84,6 +84,49 @@ $.ajax({ type: 'DELETE', url: '/api/todos/1' });""",
   'ex-modern-3': [
     'const charger = async () => { try { const r = await fetch(u); } catch (e) { console.error(e); } };',
   ],
+  'ex-js-3': ['for (var n = 1; n < 6; n += 1) { console.log(n) }'],
+  'ex-js-4': [
+    'const estMajeur = (age) => age >= 18;',
+    'function estMajeur(a) { if (a < 18) { return false; } return true; }',
+  ],
+  'ex-js-5': ['let personne = { "age": 30, "nom": "Alice" }; console.log(personne["nom"])'],
+  'ex-js-6': [
+    'let noms = utilisateurs.map(function (x) { return x.nom; }); console.log(noms);',
+    'const noms = utilisateurs.map(({ nom }) => nom); console.log(noms)',
+  ],
+  'ex-js-7': [
+    'const majeurs = utilisateurs.filter(function (u) { return u.age > 17; }); console.log(majeurs);',
+  ],
+  'ex-jquery-4': [
+    r'$("#liste").find("li").each((i, el) => { console.log($(el).text()); });',
+    r"$('ul#liste > li').each(function () { console.log(this.textContent); });",
+  ],
+  'ex-events-6': [
+    r"$('#champ').keydown((e) => { if ('Enter' === e.key) $('#message').text('Validé !'); });",
+  ],
+  'ex-events-7': [r"$('#bouton').click(e => e.stopPropagation());"],
+  'ex-anim-5': [r"$('#btn').click(() => $('#zone').stop(true, true).slideToggle(300));"],
+  'ex-ajax-4': [
+    r"""$('#form').submit(function (e) {
+  e.preventDefault();
+  $.ajax({ url: '/api/contact', method: 'POST', data: $('#form').serialize() });
+});""",
+  ],
+  'ex-ajax-5': [
+    r"$.when($.getJSON('/api/users'), $.getJSON('/api/todos')).then(() => console.log('Tout est chargé'));",
+  ],
+  'ex-http-5': [r"$.get(`/api/search?q=${encodeURIComponent(texte)}`)"],
+  'ex-http-6': [
+    r"$.ajax({ url: '/api/me', type: 'GET', headers: { 'Authorization': `Bearer ${token}` } });",
+    r"$.ajax({ url: '/api/me', beforeSend: function (x) { x.setRequestHeader('Authorization', 'Bearer ' + token); } });",
+  ],
+  'ex-rest-4': [r"$.ajax('/api/users/7', { type: 'DELETE' })"],
+  'ex-rest-5': [
+    r'$.ajax({ method: "POST", url: "/api/users", headers: { "Content-Type": "application/json" }, data: JSON.stringify({ name: "Alice" }) })',
+  ],
+  'ex-modern-4': [
+    'async function f() { await Promise.all([fetch(urlTodos), fetch(urlUsers)]); console.log("Tout est chargé"); }\nf();',
+  ],
 };
 
 /// Réponses fausses, y compris celles qui contiennent les bons mots.
@@ -117,6 +160,22 @@ const Map<String, List<String>> _wrong = {
   ],
   'ex-modern-2': ['async await', 'function charger() { const r = await fetch(u); const d = await r.json(); console.log(d); }'],
   'ex-modern-3': ['try catch', 'async function charger() { try { await fetch(u); } catch (e) { } }'],
+  'ex-js-3': ['for console.log', 'for (let i = 0; i < 5; i++) { console.log(i); }'],
+  'ex-js-4': ['estMajeur return 18', 'function estMajeur(age) { return age > 18; }'],
+  'ex-js-5': ['personne nom age', "const personne = ['Alice', 30]; console.log(personne[0]);"],
+  'ex-js-6': ['map noms', 'const noms = utilisateurs.map(u => u.age); console.log(noms);'],
+  'ex-js-7': ['filter', 'const majeurs = utilisateurs.filter(u => u.age < 18); console.log(majeurs);'],
+  'ex-jquery-4': ['each li', r"$('#liste li').each(() => console.log($(this).text()));"],
+  'ex-events-6': ['keydown Enter', r"$('#champ').on('keydown', function (e) { if (e.key = 'Enter') { $('#message').text('Validé !'); } });"],
+  'ex-events-7': ['stopPropagation', r"$('#bouton').on('click', function (e) { e.preventDefault(); });"],
+  'ex-anim-5': ['stop slideToggle', r"$('#btn').on('click', function () { $('#zone').slideToggle(300).stop(); });"],
+  'ex-ajax-4': ['serialize', r"$('#form').on('submit', function (e) { $.post('/api/contact', $(this).serialize()); });"],
+  'ex-ajax-5': ['when done', r"$.get('/api/users'); $.get('/api/todos'); console.log('Tout est chargé');"],
+  'ex-http-5': ['encodeURIComponent', r"$.get('/api/search?q=' + texte);"],
+  'ex-http-6': ['Authorization Bearer', r"$.ajax({ url: '/api/me', data: { Authorization: 'Bearer ' + token } });"],
+  'ex-rest-4': ['DELETE', r"$.ajax({ url: '/api/users', method: 'DELETE' });", r"$.get('/api/users/7');"],
+  'ex-rest-5': ['POST stringify', r"$.ajax({ url: '/api/users', method: 'POST', data: { name: 'Alice' } });"],
+  'ex-modern-4': ['Promise.all', "fetch(urlUsers); fetch(urlTodos); console.log('Tout est chargé');"],
 };
 
 void main() {

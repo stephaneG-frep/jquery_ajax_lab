@@ -286,6 +286,79 @@ List<CourseModule> ajaxModules() => [
                   'aucune clé n\'est nécessaire.'),
             ],
           ),
+          CourseSection(
+            id: 'ajax-8-7',
+            moduleId: 'ajax',
+            order: 7,
+            title: r"Raccourcis utiles : .serialize(), $.getJSON() et .load()",
+            blocks: [
+              const ParagraphBlock(
+                  r"**.serialize()** rassemble les champs d'un formulaire en une seule ligne prête à envoyer."),
+              const CodeBlock(
+                r'''$('#form').on('submit', function (e) {
+  e.preventDefault();
+  $.post('/api/contact', $(this).serialize(), function () {
+    $('#etat').text('Message envoyé');
+  });
+});''',
+                explanation: r"On obtient par exemple nom=Alice&ville=Paris.",
+              ),
+              const WarningBlock(
+                  r"Un champ sans attribut name est ignoré par serialize(), même s'il a un id."),
+              const ParagraphBlock(
+                  r"**$.getJSON()** est un $.get() qui attend du JSON. **.load()** insère du HTML reçu directement dans un élément."),
+              const CodeBlock(
+                r'''$.getJSON('/api/users', function (users) {
+  console.log(users.length);
+});
+
+$('#contenu').load('/aide.html');
+$('#contenu').load('/aide.html #intro'); // seulement #intro''',
+                explanation: r"Avec un sélecteur après l'URL, load() n'insère que cette partie.",
+              ),
+              const WarningBlock(
+                  r".load() insère du HTML tel quel : ne l'utilisez qu'avec votre propre serveur."),
+              const ExerciseLinkBlock('ex-ajax-4'),
+            ],
+          ),
+          CourseSection(
+            id: 'ajax-8-8',
+            moduleId: 'ajax',
+            order: 8,
+            title: r"Plusieurs requêtes : $.when() et abort()",
+            blocks: [
+              const ParagraphBlock(
+                  r"Deux requêtes indépendantes peuvent partir **en même temps**. **$.when()** attend qu'elles soient toutes terminées."),
+              const CodeBlock(
+                r'''$.when($.get('/api/users'), $.get('/api/todos'))
+  .done(function (users, todos) {
+    console.log(users[0].length, todos[0].length);
+  })
+  .fail(function () {
+    console.log('Au moins une requête a échoué');
+  });''',
+                explanation: r"Chaque résultat est un tableau [données, statut, xhr] : les données sont en [0].",
+              ),
+              const ParagraphBlock(
+                  r"Une requête devenue inutile peut être **annulée**. C'est le cas d'une recherche, où seule la dernière frappe compte."),
+              const CodeBlock(
+                r'''let requete = null;
+
+$('#recherche').on('input', function () {
+  if (requete) {
+    requete.abort(); // annule la précédente
+  }
+  requete = $.get('/api/search', { q: $(this).val() }, function (data) {
+    console.log(data);
+  });
+});''',
+                explanation: r"$.get() renvoie un objet xhr, qui possède la méthode abort().",
+              ),
+              const InfoBlock(
+                  r"Une requête annulée passe par .fail() avec le statut « abort » : ne l'affichez pas comme une erreur."),
+              const ExerciseLinkBlock('ex-ajax-5'),
+            ],
+          ),
         ],
       ),
       CourseModule(
@@ -451,6 +524,7 @@ example.com  : le serveur
                   'Pour apprendre, privilégiez les API publiques sans secret : c\'est le cas de toutes '
                   'les démonstrations de cette application.'),
               const ExerciseLinkBlock('ex-http-3'),
+              const ExerciseLinkBlock('ex-http-6'),
             ],
           ),
           CourseSection(
@@ -533,6 +607,69 @@ example.com  : le serveur
                 explanation: 'Un identifiant inexistant renvoie 404 : à vous d\'afficher un message clair.',
               ),
               const ExerciseLinkBlock('ex-http-4'),
+            ],
+          ),
+          CourseSection(
+            id: 'http-9-7',
+            moduleId: 'http',
+            order: 7,
+            title: r"CORS : pourquoi ma requête est-elle bloquée ?",
+            blocks: [
+              const ParagraphBlock(
+                  r"Par sécurité, une page ne peut lire la réponse d'un **autre domaine** que si ce serveur l'autorise. Ce mécanisme s'appelle **CORS**."),
+              const CodeBlock(
+                r'''HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://monsite.fr''',
+                language: 'http',
+                explanation: r"Le serveur autorise les pages de monsite.fr à lire sa réponse. Une étoile (*) autorise tous les sites.",
+              ),
+              const ParagraphBlock(
+                  r"Sans cet en-tête, la console affiche une erreur CORS et jQuery appelle error avec un statut 0."),
+              const CodeBlock(
+                r'''$.get('https://api.exemple.com/data').fail(function (xhr) {
+  if (xhr.status === 0) {
+    console.log('Réseau coupé, ou requête bloquée (CORS)');
+  }
+});''',
+                explanation: r"Le code ne peut pas distinguer les deux cas : regardez la console du navigateur.",
+              ),
+              const ParagraphBlock(
+                  r"Pour certaines requêtes (PUT, DELETE, corps JSON, en-tête Authorization…), le navigateur envoie d'abord une requête **OPTIONS** de vérification."),
+              const WarningBlock(
+                  r"CORS se règle sur le serveur. Aucun code jQuery ne peut l'autoriser à sa place."),
+              const InfoBlock(
+                  r"L'explorateur AJAX de l'application n'est pas un navigateur : il n'est pas soumis à CORS. Le laboratoire, lui, l'est."),
+              const ExerciseLinkBlock('ex-http-6'),
+            ],
+          ),
+          CourseSection(
+            id: 'http-9-8',
+            moduleId: 'http',
+            order: 8,
+            title: r"Encoder une URL : encodeURIComponent()",
+            blocks: [
+              const ParagraphBlock(
+                  r"Dans une URL, certains caractères ont un **rôle spécial** : & sépare les paramètres, ? commence la requête, # désigne une ancre. Un texte libre doit donc être encodé."),
+              const CodeBlock(
+                r'''const texte = 'café & thé';
+
+// Incorrect : le & coupe le paramètre en deux
+$.get('/api/search?q=' + texte);
+
+// Correct
+$.get('/api/search?q=' + encodeURIComponent(texte));
+// → /api/search?q=caf%C3%A9%20%26%20th%C3%A9''',
+                explanation: r"Chaque caractère spécial devient un code précédé de %.",
+              ),
+              const ParagraphBlock(
+                  r"Avec un objet de paramètres, jQuery encode **pour vous** :"),
+              const CodeBlock(
+                r'''$.get('/api/search', { q: texte, page: 2 });''',
+                explanation: r"C'est la forme la plus simple et la plus sûre.",
+              ),
+              const TipBlock(
+                  r"decodeURIComponent() fait l'opération inverse."),
+              const ExerciseLinkBlock('ex-http-5'),
             ],
           ),
         ],
@@ -879,6 +1016,7 @@ console.log(texte2); // → {"name":"Alice","age":30}''',
               const TipBlock(
                   'Un bon consommateur d\'API écrit d\'abord la gestion d\'erreur, ensuite le succès : '
                   'c\'est l\'ordre qui protège l\'utilisateur.'),
+              const ExerciseLinkBlock('ex-rest-4'),
             ],
           ),
           CourseSection(
@@ -923,6 +1061,7 @@ function chargerTaches() {
                   'Vous venez de dessiner le plan d\'une application complète. Le mini-projet « To-do '
                   'list jQuery » et le projet final reprendront exactement ce schéma.'),
               const ExerciseLinkBlock('ex-rest-3'),
+              const ExerciseLinkBlock('ex-rest-5'),
             ],
           ),
         ],
@@ -1167,6 +1306,42 @@ console.log(data);''',
                 text: 'jQuery = concision historique. Moderne = standard du navigateur. Maîtrisez les '
                     'concepts, et les deux syntaxes ne seront plus que des détails.',
               ),
+            ],
+          ),
+          CourseSection(
+            id: 'modern-12-7',
+            moduleId: 'modern',
+            order: 7,
+            title: r"Promise.all() et FormData",
+            blocks: [
+              const ParagraphBlock(
+                  r"**Promise.all()** lance plusieurs opérations en parallèle et attend qu'elles aient **toutes** réussi."),
+              const CodeBlock(
+                r'''async function charger() {
+  const [r1, r2] = await Promise.all([
+    fetch('/api/users'),
+    fetch('/api/todos')
+  ]);
+  const users = await r1.json();
+  const todos = await r2.json();
+  console.log(users.length, todos.length);
+}''',
+                explanation: r"Les résultats arrivent dans l'ordre du tableau, quelle que soit la requête la plus rapide.",
+              ),
+              const WarningBlock(
+                  r"Si une seule Promise échoue, Promise.all() échoue aussi : entourez-le de try / catch."),
+              const ParagraphBlock(
+                  r"**FormData** regroupe les champs d'un formulaire, **fichiers compris**."),
+              const CodeBlock(
+                r'''const form = document.querySelector('#form');
+const donnees = new FormData(form);
+
+fetch('/api/contact', { method: 'POST', body: donnees });''',
+                explanation: r"Ne fixez pas Content-Type : le navigateur le choisit lui-même pour un FormData.",
+              ),
+              const InfoBlock(
+                  r"Équivalents jQuery : $.when() pour Promise.all(), et .serialize() pour un formulaire sans fichier."),
+              const ExerciseLinkBlock('ex-modern-4'),
             ],
           ),
         ],

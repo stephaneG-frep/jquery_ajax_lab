@@ -4,7 +4,9 @@ import '../models/content_block.dart';
 import '../models/course.dart';
 import '../models/exercise.dart';
 import '../models/project.dart';
+import '../models/quiz.dart';
 import '../models/snippet.dart';
+import '../services/progress_service.dart';
 import '../utils/search_text.dart';
 import 'courses_ajax.dart';
 import 'courses_base.dart';
@@ -13,6 +15,7 @@ import 'exercises_data.dart';
 import 'explain_data.dart';
 import 'glossary_data.dart';
 import 'projects_data.dart';
+import 'quizzes_data.dart';
 import 'snippets_data.dart';
 
 /// Point d'accès unique aux données pédagogiques de l'application.
@@ -37,6 +40,23 @@ class AppData {
   static final List<GlossaryEntry> glossary = allGlossary();
 
   static final List<ExplainableCode> explainableCodes = allExplainableCodes();
+
+  // ----- Quiz -----
+
+  static const List<Quiz> quizzes = allQuizzes;
+
+  static Quiz? quizOf(String moduleId) {
+    for (final q in quizzes) {
+      if (q.moduleId == moduleId) return q;
+    }
+    return null;
+  }
+
+  static bool isQuizPassed(String moduleId) {
+    final quiz = quizOf(moduleId);
+    final best = ProgressService.instance.bestQuizScore(moduleId);
+    return quiz != null && best != null && best >= quiz.passMark;
+  }
 
   // ----- Recherche -----
 

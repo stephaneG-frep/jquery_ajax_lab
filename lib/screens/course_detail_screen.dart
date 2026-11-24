@@ -9,6 +9,7 @@ import '../models/exercise.dart';
 import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
 import '../widgets/kit.dart';
+import '../widgets/quiz_card.dart';
 import 'exercise_detail_screen.dart';
 import 'section_screen.dart';
 
@@ -118,7 +119,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     },
                   ),
                 ),
+              QuizCard(moduleId: module.id),
               if (moduleExercises.isNotEmpty) ...[
+                const SizedBox(height: 12),
                 const SizedBox(height: 8),
                 const SectionHeader(
                   icon: Icons.fitness_center,

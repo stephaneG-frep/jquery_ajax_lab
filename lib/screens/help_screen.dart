@@ -23,8 +23,8 @@ class HelpScreen extends StatelessWidget {
     (
       title: '3 · L\'onglet Cours',
       text: 'Le cours est découpé en modules, eux-mêmes découpés en leçons. '
-          'Suivez les leçons dans l\'ordre : à partir du module 2, chacun propose des '
-          'exercices.'
+          'Suivez les leçons dans l\'ordre. Chaque module se termine par un '
+          'quiz et, à partir du module 2, propose des exercices de code.'
     ),
     (
       title: '4 · Terminer une leçon',
@@ -50,85 +50,91 @@ class HelpScreen extends StatelessWidget {
           '(Indice 1, puis Indice 2) ou consultez la solution.'
     ),
     (
-      title: '8 · Tester dans le Lab',
+      title: '8 · Les quiz',
+      text: 'Cinq questions par module, avec une explication à chaque réponse. '
+          'Il faut 4 bonnes réponses pour réussir ; vous pouvez recommencer '
+          'autant de fois que vous voulez, le meilleur score est conservé.'
+    ),
+    (
+      title: '9 · Tester dans le Lab',
       text: 'Depuis un exercice de code, touchez « Tester dans le Lab » : '
           'votre code est copié dans l\'éditeur JavaScript pour que vous '
           'puissiez l\'exécuter immédiatement.'
     ),
     (
-      title: '9 · L\'onglet Projets',
+      title: '10 · L\'onglet Projets',
       text: 'Dix mini-projets progressifs puis un projet final (AJAX '
           'Dashboard). Chaque projet décompose le travail en étapes avec des '
           'solutions à la clé.'
     ),
     (
-      title: '10 · Exécuter un projet',
+      title: '11 · Exécuter un projet',
       text: 'Chaque projet propose « Exécuter le code final dans le Lab » : '
           'le code final est chargé dans le lab et vous pouvez le tester '
           'immédiatement.'
     ),
     (
-      title: '11 · Explique-moi ce code',
+      title: '12 · Explique-moi ce code',
       text: 'Sur tout bloc de code du cours, touchez l\'icône d\'explication '
           'pour afficher une explication ligne par ligne du code.'
     ),
     (
-      title: '12 · L\'onglet Docs',
+      title: '13 · L\'onglet Docs',
       text: 'L\'aide-mémoire regroupe les fiches essentielles (sélection, '
           'manipulation, événements, animations, AJAX…) et le glossaire des '
           'termes techniques.'
     ),
     (
-      title: '13 · La recherche',
+      title: '14 · La recherche',
       text: 'Touchez l\'icône loupe pour chercher dans les cours, leçons, '
           'exercices, projets, fiches et le glossaire.'
     ),
     (
-      title: '14 · Les favoris',
+      title: '15 · Les favoris',
       text: 'Touchez l\'étoile d\'une leçon, d\'un exercice, d\'un projet ou '
           'd\'une fiche pour l\'ajouter à vos favoris, accessibles depuis '
           'l\'icône étoile de la barre supérieure.'
     ),
     (
-      title: '15 · L\'explorateur AJAX',
+      title: '16 · L\'explorateur AJAX',
       text: 'Un mini-Postman pour lancer de vraies requêtes HTTP (GET, POST, '
           'PUT, PATCH, DELETE) sur une URL et visualiser le statut, les '
           'en-têtes et la réponse JSON.'
     ),
     (
-      title: '16 · Les exemples rapides',
+      title: '17 · Les exemples rapides',
       text: 'L\'explorateur propose des exemples prêts à l\'emploi : GET '
           'users, POST, PATCH, DELETE, URL invalide ou page 404.'
     ),
     (
-      title: '17 · L\'écran Progression',
+      title: '18 · L\'écran Progression',
       text: 'Visible depuis l\'accueil, il détaille votre avancement par '
           'catégorie : bases du Web, jQuery, DOM, Événements, Animations, '
           'AJAX et REST.'
     ),
     (
-      title: '18 · Les paramètres',
+      title: '19 · Les paramètres',
       text: 'Changez le thème (clair / sombre / système), la taille du texte '
           'et celle du code. La réinitialisation totale se trouve aussi ici.'
     ),
     (
-      title: '19 · Aucune connexion requise',
+      title: '20 · Aucune connexion requise',
       text: 'Tout le contenu est hors-ligne. Seules les requêtes de '
           'l\'explorateur AJAX et les exemples utilisant des API publiques '
           'ont besoin d\'Internet.'
     ),
     (
-      title: '20 · Les citations',
+      title: '21 · Les citations',
       text: 'L\'accueil affiche chaque jour une citation liée au '
           'développement web.'
     ),
     (
-      title: '21 · Progression sauvegardée',
+      title: '22 · Progression sauvegardée',
       text: 'Votre progression, vos favoris et vos réglages sont conservés '
           'localement sur l\'appareil, même après fermeture de l\'application.'
     ),
     (
-      title: '22 · Par où commencer ?',
+      title: '23 · Par où commencer ?',
       text: 'Le plus simple : Module 1 du cours. Ensuite alternez cours, '
           'exercices et projets. Le lab est là pour expérimenter à tout '
           'moment.'

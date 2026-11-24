@@ -1,5 +1,24 @@
 import '../models/exercise.dart';
 
+/// Page de test qui simule un serveur (requêtes vers /api/…).
+const String _fakeServer = r'''<p>Requêtes reçues par le serveur simulé :</p>
+<ol id="journal"></ol>
+<script>
+// Faux serveur : affiche chaque requête au lieu de l'envoyer
+$.ajaxTransport('+*', function (options) {
+  return {
+    send: function (headers, done) {
+      var ligne = options.type + ' ' + options.url;
+      if (options.data) ligne += ' | ' + options.data;
+      if (headers.Authorization) ligne += ' | Authorization: ' + headers.Authorization;
+      $('<li>').text(ligne).appendTo('#journal');
+      done(200, 'OK', { text: '{}' });
+    },
+    abort: function () {}
+  };
+});
+</script>''';
+
 /// Tous les exercices pédagogiques, classés par niveau et par catégorie.
 List<Exercise> allExercises() => [
       // ============================= HTML =============================
@@ -96,6 +115,151 @@ List<Exercise> allExercises() => [
         choices: ['string', 'number', 'boolean', 'object'],
         correctChoiceIndex: 1,
       ),
+      Exercise(
+        id: 'ex-js-7',
+        title: r"Garder les majeurs",
+        moduleId: 'js',
+        category: 'JavaScript',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Filtrer un tableau avec filter().",
+        instructions: r"Dans utilisateurs (objets { nom, age }), créez le tableau majeurs avec ceux qui ont au moins 18 ans, puis affichez-le.",
+        hints: [
+          r"filter() garde les éléments pour lesquels la fonction renvoie true.",
+          r"La condition est u.age >= 18.",
+        ],
+        solution: r'''const majeurs = utilisateurs.filter(u => u.age >= 18);
+console.log(majeurs);''',
+        solutionExplanation: r"filter() garde Alice et Chloé ; le tableau d'origine ne change pas.",
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+var utilisateurs = [
+  { nom: 'Alice', age: 30 },
+  { nom: 'Bob', age: 16 },
+  { nom: 'Chloé', age: 22 }
+];
+</script>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"\bmajeurs=utilisateurs\.filter\(",
+            r"\bage(?:>=18|>17)\b|\b18<=\w+\.age\b",
+            r"console\.log\(majeurs\)",
+          ],
+          feedback: r"Rappel : const majeurs = utilisateurs.filter(u => u.age >= 18); puis console.log(majeurs);",
+        ),
+      ),
+      Exercise(
+        id: 'ex-js-6',
+        title: r"Extraire les noms",
+        moduleId: 'js',
+        category: 'JavaScript',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Transformer un tableau avec map().",
+        instructions: r"utilisateurs est un tableau d'objets { nom, age }. Créez le tableau noms qui contient seulement les noms, puis affichez-le.",
+        hints: [
+          r"map() transforme chaque élément du tableau.",
+          r"La fonction reçoit un utilisateur et renvoie son nom.",
+        ],
+        solution: r'''const noms = utilisateurs.map(u => u.nom);
+console.log(noms);''',
+        solutionExplanation: r"map() appelle la fonction pour chaque utilisateur et rassemble les résultats.",
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+var utilisateurs = [
+  { nom: 'Alice', age: 30 },
+  { nom: 'Bob', age: 16 },
+  { nom: 'Chloé', age: 22 }
+];
+</script>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"\bnoms=utilisateurs\.map\((?:\(?(\w+)\)?=>(?:\{return )?\1\.nom\b|function ?\w*\((\w+)\)\{return \2\.nom\b|\(\{nom\}\)=>nom\b)",
+            r"console\.log\(noms\)",
+          ],
+          feedback: r"Rappel : const noms = utilisateurs.map(u => u.nom); puis console.log(noms);",
+        ),
+      ),
+      Exercise(
+        id: 'ex-js-5',
+        title: r"Créer un objet",
+        moduleId: 'js',
+        category: 'JavaScript',
+        level: ExerciseLevel.guided,
+        type: ExerciseType.code,
+        objective: r"Regrouper des valeurs dans un objet.",
+        instructions: r"Créez un objet personne avec nom valant 'Alice' et age valant 30, puis affichez son nom dans la console.",
+        hints: [
+          r"Un objet s'écrit entre accolades, avec des paires clé : valeur.",
+          r"On lit une clé avec un point : personne.nom.",
+        ],
+        solution: r'''const personne = { nom: 'Alice', age: 30 };
+console.log(personne.nom);''',
+        solutionExplanation: r"Les accolades créent l'objet, et la notation point lit la clé nom.",
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"\b(?:const|let|var) personne=\{(?=[^}]*\bnom'?:'Alice')(?=[^}]*\bage'?:30\b)",
+            r"console\.log\(personne(?:\.nom\b|\['nom'\])",
+          ],
+          feedback: r"Rappel : const personne = { nom: 'Alice', age: 30 }; puis console.log(personne.nom);",
+        ),
+      ),
+      Exercise(
+        id: 'ex-js-4',
+        title: r"Majeur ou mineur",
+        moduleId: 'js',
+        category: 'JavaScript',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Écrire une fonction qui teste un âge.",
+        instructions: r"Écrivez la fonction estMajeur(age) qui renvoie true si age vaut au moins 18, sinon false.",
+        hints: [
+          r"Une comparaison donne déjà true ou false.",
+          r"« au moins 18 » s'écrit age >= 18.",
+        ],
+        solution: r'''function estMajeur(age) {
+  return age >= 18;
+}''',
+        solutionExplanation: r"La comparaison renvoie directement un booléen : pas besoin de if.",
+        labHtml: r'''<input id="age" type="number" value="20">
+<button onclick="$('#message').text(String(estMajeur(Number($('#age').val()))))">Appeler estMajeur()</button>
+<p id="message"></p>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"function estMajeur\(\w+\)\{|estMajeur=(?:function ?\w*)?\(?\w+\)?(?:=>|\{)",
+            r">=18\b|>17\b|<18\b|\b18<=",
+            r"\breturn\b|=>",
+          ],
+          feedback: r"Rappel : function estMajeur(age) { return age >= 18; }",
+        ),
+      ),
+      Exercise(
+        id: 'ex-js-3',
+        title: r"Compter avec for",
+        moduleId: 'js',
+        category: 'JavaScript',
+        level: ExerciseLevel.guided,
+        type: ExerciseType.code,
+        objective: r"Afficher les nombres de 1 à 5.",
+        instructions: r"Avec une boucle for et une variable i, affichez dans la console les nombres de 1 à 5.",
+        hints: [
+          r"Une boucle for a trois parties : départ ; condition ; étape.",
+          r"for (let i = 1; i <= 5; i++) { … }",
+        ],
+        solution: r'''for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}''',
+        solutionExplanation: r"i part de 1, la boucle continue tant que i <= 5, et i++ ajoute 1 à chaque tour.",
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"\bfor\((?:let|var) (\w+)=1;\1(?:<=5|<6);(?:\1\+\+|\+\+\1|\1\+=1)\)",
+            r"console\.log\(",
+          ],
+          feedback: r"Rappel : for (let i = 1; i <= 5; i++) { console.log(i); }",
+        ),
+      ),
       // ============================= JQUERY =============================
       Exercise(
         id: 'ex-jquery-1',
@@ -179,6 +343,39 @@ List<Exercise> allExercises() => [
           ],
           feedback: 'Rappel : \$(document).ready(function () { … }); permet d\'attendre que la page '
               'soit prête.',
+        ),
+      ),
+      Exercise(
+        id: 'ex-jquery-4',
+        title: r"Parcourir une liste",
+        moduleId: 'jquery',
+        category: 'jQuery',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Utiliser .each() sur une liste.",
+        instructions: r"Parcourez les <li> de #liste avec .each() et affichez le texte de chacun dans la console.",
+        hints: [
+          r"Sélectionnez '#liste li', puis .each(function () { … }).",
+          r"Dans la fonction, $(this) est l'élément en cours.",
+        ],
+        solution: r'''$('#liste li').each(function () {
+  console.log($(this).text());
+});''',
+        solutionExplanation: r".each() appelle la fonction pour chaque <li>, et $(this).text() lit son texte.",
+        labHtml: r'''<ul id="liste">
+  <li>Pomme</li>
+  <li>Poire</li>
+  <li>Banane</li>
+</ul>
+<p>Le résultat s'affiche dans la console, en bas.</p>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"(?:<jq>\('\w*#liste ?>? ?li'\)|<jq>\('\w*#liste'\)\.(?:find|children)\('li'\))\.each\(<fn>",
+            r"console\.log\(",
+            r"<jq>\(\w+\)\.text\(\)|\.(?:textContent|innerText)\b",
+          ],
+          forbidden: [r"=>(?:(?!function).)*<jq>\(this\)"],
+          feedback: r"Rappel : $('#liste li').each(function () { console.log($(this).text()); });",
         ),
       ),
       // ============================= DOM =============================
@@ -464,6 +661,71 @@ List<Exercise> allExercises() => [
               'créés après le chargement.',
         ),
       ),
+      Exercise(
+        id: 'ex-events-7',
+        title: r"Stopper la propagation",
+        moduleId: 'events',
+        category: 'Événements',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Empêcher un clic de remonter.",
+        instructions: r"#bouton est dans #carte, qui réagit aussi au clic. Faites en sorte qu'un clic sur #bouton ne remonte pas jusqu'à #carte.",
+        hints: [
+          r"Le callback reçoit l'objet événement e.",
+          r"La méthode s'appelle stopPropagation().",
+        ],
+        solution: r'''$('#bouton').on('click', function (e) {
+  e.stopPropagation();
+});''',
+        solutionExplanation: r"stopPropagation() arrête la remontée : #carte ne reçoit plus le clic.",
+        labHtml: r'''<div id="carte" style="padding: 20px; background: #eef2ff;">
+  La carte
+  <button id="bouton">Le bouton</button>
+</div>
+<p>Le bouton ne doit rien afficher dans la console.</p>
+<script>
+$('#carte').on('click', function () {
+  console.log('Clic reçu par la carte');
+});
+</script>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\('\w*#bouton'\)\.(?:on\('click',|click\()<cb>",
+            r"\.stopPropagation\(\)|\breturn false\b",
+          ],
+          feedback: r"Rappel : $('#bouton').on('click', function (e) { e.stopPropagation(); });",
+        ),
+      ),
+      Exercise(
+        id: 'ex-events-6',
+        title: r"Valider avec Entrée",
+        moduleId: 'events',
+        category: 'Événements',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Réagir à une touche précise.",
+        instructions: r"Dans #champ, quand l'utilisateur appuie sur Entrée, affichez « Validé ! » dans #message.",
+        hints: [
+          r"Écoutez keydown et lisez e.key.",
+          r"La touche Entrée s'appelle 'Enter'.",
+        ],
+        solution: r'''$('#champ').on('keydown', function (e) {
+  if (e.key === 'Enter') {
+    $('#message').text('Validé !');
+  }
+});''',
+        solutionExplanation: r"e.key contient le nom de la touche ; on n'agit que pour 'Enter'.",
+        labHtml: r'''<input id="champ" placeholder="Tapez puis Entrée">
+<p id="message"></p>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\('\w*#champ'\)\.(?:on\('key(?:down|up)',|key(?:down|up)\()<cb>",
+            r"\.key===?'Enter'|'Enter'===?\w+\.key\b",
+            r"<jq>\('\w*#message'\)\.(?:text|html)\('Validé ?!'\)",
+          ],
+          feedback: r"Rappel : $('#champ').on('keydown', function (e) { if (e.key === 'Enter') { $('#message').text('Validé !'); } });",
+        ),
+      ),
       // ============================= ANIMATIONS =============================
       Exercise(
         id: 'ex-anim-1',
@@ -573,6 +835,33 @@ List<Exercise> allExercises() => [
           feedback: 'Rappel : \$( "#boite" ).animate( { left: "+=150px" }, 800 ).',
         ),
       ),
+      Exercise(
+        id: 'ex-anim-5',
+        title: r"Éviter l'accumulation",
+        moduleId: 'anim',
+        category: 'Animations',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Interrompre une animation en cours.",
+        instructions: r"Au clic sur #btn, faites glisser #zone (bascule en 300 ms) sans que des clics rapides s'accumulent.",
+        hints: [
+          r"Interrompez l'animation en cours avant d'en lancer une autre.",
+          r"Chaînez .stop() puis .slideToggle(300).",
+        ],
+        solution: r'''$('#btn').on('click', function () {
+  $('#zone').stop().slideToggle(300);
+});''',
+        solutionExplanation: r"stop() interrompt l'animation en cours, puis slideToggle() repart.",
+        labHtml: r'''<button id="btn">Cliquer vite plusieurs fois</button>
+<div id="zone" style="background: #eef2ff; padding: 30px;">La zone</div>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\('\w*#btn'\)\.(?:on\('click',|click\()<cb>",
+            r"<jq>\('\w*#zone'\)\.stop\([^)]*\)\.slideToggle\((?:300\b|\{duration:300\b)",
+          ],
+          feedback: r"Rappel : $('#zone').stop().slideToggle(300); dans le gestionnaire de clic.",
+        ),
+      ),
       // ============================= AJAX =============================
       Exercise(
         id: 'ex-ajax-1',
@@ -669,6 +958,69 @@ List<Exercise> allExercises() => [
           ],
           feedback: 'Rappel : ajoutez error: function (xhr) { console.log("Erreur"); } à votre objet '
               'd\'options.',
+        ),
+      ),
+      Exercise(
+        id: 'ex-ajax-5',
+        title: r"Attendre deux requêtes",
+        moduleId: 'ajax',
+        category: 'AJAX',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Combiner deux requêtes avec $.when().",
+        instructions: r"Avec $.when(), lancez $.get('/api/users') et $.get('/api/todos'), puis affichez « Tout est chargé » dans la console quand les deux ont réussi.",
+        hints: [
+          r"$.when() reçoit les deux requêtes, séparées par une virgule.",
+          r"Enchaînez avec .done(function () { … }).",
+        ],
+        solution: r'''$.when($.get('/api/users'), $.get('/api/todos')).done(function () {
+  console.log('Tout est chargé');
+});''',
+        solutionExplanation: r"done() n'est appelé que lorsque les deux requêtes ont réussi.",
+        labHtml: _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\.when\(<jq>\.(?:get|getJSON|ajax)\(.*,<jq>\.(?:get|getJSON|ajax)\(",
+            r"'/api/users'",
+            r"'/api/todos'",
+            r"\)\.(?:done|then)\(<cb>",
+            r"console\.log\('Tout est chargé'\)",
+          ],
+          feedback: r"Rappel : $.when($.get('/api/users'), $.get('/api/todos')).done(function () { … });",
+        ),
+      ),
+      Exercise(
+        id: 'ex-ajax-4',
+        title: r"Envoyer un formulaire",
+        moduleId: 'ajax',
+        category: 'AJAX',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Utiliser .serialize() avec $.post().",
+        instructions: r"À l'envoi de #form, empêchez le rechargement puis envoyez ses champs à '/api/contact' avec $.post() et .serialize().",
+        hints: [
+          r"Commencez par e.preventDefault().",
+          r"Deuxième argument de $.post() : $(this).serialize().",
+        ],
+        solution: r'''$('#form').on('submit', function (e) {
+  e.preventDefault();
+  $.post('/api/contact', $(this).serialize());
+});''',
+        solutionExplanation: r"serialize() transforme les champs en nom=…&ville=…, que $.post() envoie.",
+        labHtml: r'''<form id="form">
+  <input name="nom" value="Alice">
+  <input name="ville" value="Paris">
+  <button type="submit">Envoyer</button>
+</form>
+''' + _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\('\w*#form'\)\.(?:on\('submit',|submit\()<cb>",
+            r"\.preventDefault\(\)",
+            r"<jq>\.(?:post\('/api/contact',|ajax\(\{(?=[^;]*'/api/contact')(?=[^;]*'POST'))[^;]*<jq>\((?:this|'\w*#form'|\w+\.(?:target|currentTarget))\)\.serialize\(\)",
+          ],
+          forbidden: [r"=>(?:(?!function).)*<jq>\(this\)"],
+          feedback: r"Rappel : e.preventDefault(); puis $.post('/api/contact', $(this).serialize());",
         ),
       ),
       // ============================= HTTP =============================
@@ -772,6 +1124,65 @@ $(document).ajaxComplete(function (e, xhr, options) {
         solutionExplanation: '404 Not Found indique que la ressource demandée n\'existe pas.',
         choices: ['200', '401', '404', '500'],
         correctChoiceIndex: 2,
+      ),
+      Exercise(
+        id: 'ex-http-6',
+        title: r"S'authentifier",
+        moduleId: 'http',
+        category: 'HTTP',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Envoyer un token dans un en-tête.",
+        instructions: r"Avec $.ajax(), envoyez un GET vers '/api/me' avec l'en-tête Authorization valant « Bearer » suivi d'un espace et de la variable token.",
+        hints: [
+          r"Les en-têtes se placent dans l'option headers.",
+          r"La valeur est 'Bearer ' + token.",
+        ],
+        solution: r'''$.ajax({
+  url: '/api/me',
+  method: 'GET',
+  headers: { Authorization: 'Bearer ' + token }
+});''',
+        solutionExplanation: r"Le serveur lit le token dans Authorization pour reconnaître l'utilisateur.",
+        labHtml: r'''<script>
+var token = 'abc123';
+</script>
+''' + _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\.ajax\(",
+            r"'/api/me'",
+            r"\bheaders'?:\{[^}]*\bAuthorization'?:'Bearer (?:'\+token\b|\$\{ ?token ?\}')|setRequestHeader\('Authorization','Bearer (?:'\+token\b|\$\{ ?token ?\}')",
+          ],
+          feedback: r"Rappel : headers: { Authorization: 'Bearer ' + token } dans les options de $.ajax().",
+        ),
+      ),
+      Exercise(
+        id: 'ex-http-5',
+        title: r"Encoder un paramètre",
+        moduleId: 'http',
+        category: 'HTTP',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Construire une URL sûre.",
+        instructions: r"La variable texte contient une saisie libre. Envoyez un $.get vers '/api/search?q=' suivi du texte correctement encodé.",
+        hints: [
+          r"Un & dans le texte couperait l'URL en deux.",
+          r"La fonction s'appelle encodeURIComponent().",
+        ],
+        solution: r'''$.get('/api/search?q=' + encodeURIComponent(texte));''',
+        solutionExplanation: r"encodeURIComponent() remplace les caractères spéciaux par des codes en %.",
+        labHtml: r'''<script>
+var texte = 'café & thé';
+</script>
+''' + _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\.(?:get|getJSON|ajax)\(",
+            r"'/api/search\?q=(?:'\+|\$\{ ?)encodeURIComponent\(texte\)",
+          ],
+          feedback: r"Rappel : $.get('/api/search?q=' + encodeURIComponent(texte));",
+        ),
       ),
       // ============================= JSON =============================
       Exercise(
@@ -939,20 +1350,7 @@ $.ajax({ url: '/api/todos/1', method: 'PATCH', data: { done: true } });
 $.ajax({ url: '/api/todos/1', method: 'DELETE' });''',
         solutionExplanation: 'GET lit, POST crée, PATCH modifie partiellement, DELETE supprime. '
             'L\'URL identifie la ressource.',
-        labHtml: r'''<p>Requêtes reçues par le serveur simulé :</p>
-<ol id="journal"></ol>
-<script>
-// Faux serveur : note chaque requête au lieu de l'envoyer
-$.ajaxTransport('+*', function (options) {
-  return {
-    send: function (headers, done) {
-      $('<li>').text(options.type + ' ' + options.url).appendTo('#journal');
-      done(200, 'OK', { text: '{}' });
-    },
-    abort: function () {}
-  };
-});
-</script>''',
+        labHtml: _fakeServer,
         rule: const ValidationRule(
           patterns: [
             r"<jq>\.(?:get|getJSON)\('/api/todos/?'|<jq>\.ajax\(\{(?=[^;]*'/api/todos/?')[^;]*'GET'",
@@ -962,6 +1360,59 @@ $.ajaxTransport('+*', function (options) {
           ],
           feedback: 'Rappel : GET lit, POST crée, PATCH modifie, DELETE supprime — écrivez les '
               'quatre requêtes.',
+        ),
+      ),
+      Exercise(
+        id: 'ex-rest-5',
+        title: r"Créer une ressource en JSON",
+        moduleId: 'rest',
+        category: 'REST',
+        level: ExerciseLevel.semiGuided,
+        type: ExerciseType.code,
+        objective: r"Écrire un POST avec un corps JSON.",
+        instructions: r"Avec $.ajax(), créez un utilisateur dans '/api/users' : envoyez en JSON un objet dont name vaut 'Alice'.",
+        hints: [
+          r"Annoncez le format : contentType: 'application/json'.",
+          r"Convertissez l'objet avec JSON.stringify().",
+        ],
+        solution: r'''$.ajax({
+  url: '/api/users',
+  method: 'POST',
+  contentType: 'application/json',
+  data: JSON.stringify({ name: 'Alice' })
+});''',
+        solutionExplanation: r"POST crée, contentType annonce du JSON, et stringify convertit l'objet en texte.",
+        labHtml: _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\.ajax\((?=[^;]*'/api/users/?')[^;]*\b(?:method|type)'?:'POST'",
+            r"(?:contentType|'Content-Type')'?:'application/json",
+            r"JSON\.stringify\(\{'?name'?:'Alice'",
+          ],
+          feedback: r"Rappel : method 'POST', contentType 'application/json' et data: JSON.stringify({ name: 'Alice' }).",
+        ),
+      ),
+      Exercise(
+        id: 'ex-rest-4',
+        title: r"Supprimer une ressource",
+        moduleId: 'rest',
+        category: 'REST',
+        level: ExerciseLevel.guided,
+        type: ExerciseType.code,
+        objective: r"Écrire une requête DELETE.",
+        instructions: r"Avec $.ajax(), supprimez l'utilisateur n° 7 de l'API '/api/users'.",
+        hints: [
+          r"L'URL désigne la ressource : /api/users/7.",
+          r"La méthode est DELETE.",
+        ],
+        solution: r'''$.ajax({ url: '/api/users/7', method: 'DELETE' });''',
+        solutionExplanation: r"L'URL dit quoi, le verbe dit quoi en faire.",
+        labHtml: _fakeServer,
+        rule: const ValidationRule(
+          patterns: [
+            r"<jq>\.ajax\((?=[^;]*'/api/users/7')[^;]*\b(?:method|type)'?:'DELETE'",
+          ],
+          feedback: r"Rappel : $.ajax({ url: '/api/users/7', method: 'DELETE' });",
         ),
       ),
       // ============================= MODERNE =============================
@@ -1063,6 +1514,37 @@ var url = 'https://jsonplaceholder.typicode.com/users';
             r"\btry\{.*\bawait\b.*\}catch\(\w+\)\{.*console\.(?:error|log)\(",
           ],
           feedback: 'Rappel : try { … } catch (erreur) { … } protège le code asynchrone.',
+        ),
+      ),
+      Exercise(
+        id: 'ex-modern-4',
+        title: r"Deux fetch en parallèle",
+        moduleId: 'modern',
+        category: 'AJAX',
+        level: ExerciseLevel.autonomous,
+        type: ExerciseType.code,
+        objective: r"Utiliser Promise.all().",
+        instructions: r"Avec Promise.all(), lancez fetch(urlUsers) et fetch(urlTodos), puis affichez « Tout est chargé » dans la console quand les deux sont terminés.",
+        hints: [
+          r"Promise.all() reçoit un tableau de Promises.",
+          r"Enchaînez avec .then(…).",
+        ],
+        solution: r'''Promise.all([fetch(urlUsers), fetch(urlTodos)]).then(function () {
+  console.log('Tout est chargé');
+});''',
+        solutionExplanation: r"Promise.all() se résout quand les deux requêtes sont terminées.",
+        labHtml: r'''<p>Le résultat s'affiche dans la console, en bas.</p>
+<script>
+var urlUsers = 'https://jsonplaceholder.typicode.com/users';
+var urlTodos = 'https://jsonplaceholder.typicode.com/todos';
+</script>''',
+        rule: const ValidationRule(
+          patterns: [
+            r"\bPromise\.all\(\[(?=.*\bfetch\(urlUsers\))(?=.*\bfetch\(urlTodos\))",
+            r"\)\.then\(|\bawait Promise\.all\(",
+            r"console\.log\('Tout est chargé'\)",
+          ],
+          feedback: r"Rappel : Promise.all([fetch(urlUsers), fetch(urlTodos)]).then(function () { … });",
         ),
       ),
     ];

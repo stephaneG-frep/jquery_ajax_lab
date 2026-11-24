@@ -26,12 +26,15 @@ class ProgressScreen extends StatelessWidget {
           final totalSections = AppData.totalSections;
           final totalExercises = AppData.totalExercises;
           final totalProjects = AppData.totalProjects;
+          final quizzesDone =
+              AppData.quizzes.where((q) => AppData.isQuizPassed(q.moduleId)).length;
+          final totalQuizzes = AppData.quizzes.length;
 
-          final globalPoints = totalSections + totalExercises + totalProjects;
-          final globalDone = sectionsDone + exercisesDone + projectsDone;
+          final globalPoints = totalSections + totalExercises + totalProjects + totalQuizzes;
+          final globalDone = sectionsDone + exercisesDone + projectsDone + quizzesDone;
           final globalRatio = globalPoints == 0 ? 0.0 : globalDone / globalPoints;
 
-          // Par catégorie : leçons + exercices + projets rattachés.
+          // Par catégorie : leçons + exercices + quiz + projets rattachés.
           final categoryRows = <({String name, int done, int total})>[];
           for (final category in ProgressCategories.all) {
             final sections = AppData.allSections
@@ -39,11 +42,15 @@ class ProgressScreen extends StatelessWidget {
             final exercises = AppData.exercises
                 .where((e) => ProgressCategories.byModule[e.moduleId] == category);
             final projects = AppData.projects.where((p) => p.category == category);
-            final total = sections.length + exercises.length + projects.length;
+            final quizzes = AppData.quizzes
+                .where((q) => ProgressCategories.byModule[q.moduleId] == category);
+            final total =
+                sections.length + exercises.length + projects.length + quizzes.length;
             final done =
                 sections.where((s) => ProgressService.instance.isSectionComplete(s.id)).length +
                     exercises.where((e) => ProgressService.instance.isExercisePassed(e.id)).length +
-                    projects.where((p) => ProgressService.instance.isProjectComplete(p.id)).length;
+                    projects.where((p) => ProgressService.instance.isProjectComplete(p.id)).length +
+                    quizzes.where((q) => AppData.isQuizPassed(q.moduleId)).length;
             categoryRows.add((name: category, done: done, total: total));
           }
           final activeCategories = categoryRows.where((r) => r.total > 0).toList();
@@ -81,6 +88,12 @@ class ProgressScreen extends StatelessWidget {
                         _countCol(icon: Icons.menu_book, value: sectionsDone, total: totalSections, label: 'Leçons', color: LabColors.coral),
                         const SizedBox(width: 10),
                         _countCol(icon: Icons.fitness_center, value: exercisesDone, total: totalExercises, label: 'Exercices', color: LabColors.amber),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _countCol(icon: Icons.quiz_outlined, value: quizzesDone, total: totalQuizzes, label: 'Quiz réussis', color: LabColors.sky),
                         const SizedBox(width: 10),
                         _countCol(icon: Icons.construction, value: projectsDone, total: totalProjects, label: 'Projets', color: LabColors.purple),
                       ],
@@ -92,7 +105,7 @@ class ProgressScreen extends StatelessWidget {
               const SectionHeader(
                 icon: Icons.bar_chart,
                 title: 'Par catégorie',
-                subtitle: 'Leçons + exercices + projets',
+                subtitle: 'Leçons + exercices + quiz + projets',
               ),
               const SizedBox(height: 12),
               for (final row in activeCategories) ...[

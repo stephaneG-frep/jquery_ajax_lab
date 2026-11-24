@@ -7,6 +7,7 @@ import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
 import '../widgets/explain_sheet.dart';
 import '../widgets/lesson_blocks.dart';
+import '../widgets/quiz_card.dart';
 import 'exercise_detail_screen.dart';
 
 /// Lecture d'une leçon avec marquage « terminée » et explications.
@@ -74,6 +75,11 @@ class _SectionScreenState extends State<SectionScreen> {
                         }
                       },
                     ),
+                    // Fin du module : on propose le quiz.
+                    if (module != null && module.sections.last.id == section.id) ...[
+                      const SizedBox(height: 16),
+                      QuizCard(moduleId: module.id),
+                    ],
                   ],
                 ),
               ),

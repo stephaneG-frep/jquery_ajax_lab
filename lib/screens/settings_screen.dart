@@ -85,7 +85,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   title: const Text('Réinitialiser toute la progression',
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                  subtitle: const Text('Leçons, exercices, projets et favoris.',
+                  subtitle: const Text('Leçons, exercices, quiz, projets et favoris.',
                       style: TextStyle(fontSize: 12)),
                   onTap: () => _confirmReset(context),
                 ),
@@ -158,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
         title: const Text('Tout réinitialiser ?'),
         content: const Text(
             'Cette action effacera définitivement votre progression '
-            '(leçons terminées, exercices réussis, projets achevés) '
+            '(leçons terminées, exercices réussis, scores de quiz, projets achevés) '
             'ainsi que vos favoris.'),
         actions: [
           TextButton(
