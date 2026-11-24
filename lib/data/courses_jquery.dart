@@ -168,8 +168,11 @@ List<CourseModule> jqueryModules() => [
   </div>
 </div>
 
-// Depuis le bouton, remonter à la carte :
-\$('#suppr').closest('.carte').remove();''',
+<script>
+  // Depuis le bouton, remonter à la carte :
+  \$('#suppr').closest('.carte').remove();
+</script>''',
+                language: 'html',
                 explanation: 'closest() remonte jusqu\'au parent .carte, puis remove() le supprime : '
                     'c\'est la technique classique des boutons de suppression.',
               ),
@@ -247,6 +250,7 @@ const nom = \$('#nom').val();
   console.log(\$('#prenom').val());   // → Bob (valeur initiale)
   \$('#prenom').val('Chloé');         // remplace la valeur
 </script>''',
+                language: 'html',
                 explanation: 'val() reflète ce que l\'utilisateur voit et tape dans le champ.',
               ),
               const TipBlock(
@@ -507,7 +511,7 @@ const li = \$('<li>').text('Nouvel item').addClass('item');
                   'À l\'intérieur d\'un callback, **\$(this)** représente l\'élément qui a déclenché l\'événement. '
                   'Cela évite de resélectionner par un id : on agit sur l\'élément cliqué, quel qu\'il soit.'),
               const CodeBlock(
-                '''// Plusieurs boutons, un seul gestionnaire
+                '''<!-- Plusieurs boutons, un seul gestionnaire -->
 <button class="bouton">Un</button>
 <button class="bouton">Deux</button>
 <button class="bouton">Trois</button>
@@ -518,6 +522,7 @@ const li = \$('<li>').text('Nouvel item').addClass('item');
     \$(this).css('background', 'green');
   });
 </script>''',
+                language: 'html',
                 explanation: 'Chaque clic agit sur le bouton précis qui a été cliqué.',
               ),
               const ParagraphBlock(
@@ -709,7 +714,7 @@ const li = \$('<li>').text('Nouvel item').addClass('item');
                   'C\'est le moyen propre d\'enchaîner une action « après ».'),
               const CodeBlock(
                 '''\$('#zone').fadeOut(500, function () {
-  console.log('L'animation est terminée');
+  console.log("L'animation est terminée");
   \$('#zone').remove();
 });''',
                 explanation: 'Le callback s\'exécute à la fin du fondu.',

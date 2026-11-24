@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/favorite_button.dart';
+import '../services/favorites_service.dart';
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 import '../data/app_data.dart';
 import '../models/snippet.dart';
+import '../utils/search_text.dart';
 import '../widgets/code_view.dart';
 import '../widgets/kit.dart';
 
@@ -25,26 +29,15 @@ class _DocsScreenState extends State<DocsScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  List<Snippet> get _snippets {
-    final q = _query.trim().toLowerCase();
-    if (q.isEmpty) return AppData.snippets;
-    return AppData.snippets
-        .where((s) =>
-            s.name.toLowerCase().contains(q) ||
-            s.description.toLowerCase().contains(q) ||
-            s.category.toLowerCase().contains(q) ||
-            s.syntax.toLowerCase().contains(q))
-        .toList();
-  }
+  bool _matches(List<String> texts) =>
+      texts.any((t) => foldText(t).contains(foldText(_query.trim())));
 
-  List<GlossaryEntry> get _glossary {
-    final q = _query.trim().toLowerCase();
-    if (q.isEmpty) return AppData.glossary;
-    return AppData.glossary
-        .where((g) =>
-            g.term.toLowerCase().contains(q) || g.definition.toLowerCase().contains(q))
-        .toList();
-  }
+  List<Snippet> get _snippets => AppData.snippets
+      .where((s) => _matches([s.name, s.description, s.category, s.syntax]))
+      .toList();
+
+  List<GlossaryEntry> get _glossary =>
+      AppData.glossary.where((g) => _matches([g.term, g.definition])).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -137,10 +130,18 @@ class _SnippetCard extends StatelessWidget {
       collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       leading: CircleAvatar(
         backgroundColor: LabColors.seed.withValues(alpha: 0.12),
-        child: Icon(snippet.icon, color: LabColors.seed, size: 18),
+        child: Icon(snippet.icon, color: LabColors.seed.readable(context, ratio: 3), size: 18),
       ),
-      title: Text(snippet.name,
-          style: const TextStyle(fontFamily: 'monospace', fontSize: 15, fontWeight: FontWeight.w700)),
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(snippet.name,
+                style: const TextStyle(
+                    fontFamily: 'monospace', fontSize: 15, fontWeight: FontWeight.w700)),
+          ),
+          FavoriteButton(kind: FavoriteKind.snippet, id: snippet.id),
+        ],
+      ),
       subtitle: Text(snippet.description,
           style: const TextStyle(fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
       children: [
@@ -198,7 +199,7 @@ class _GlossaryList extends StatelessWidget {
             collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             leading: CircleAvatar(
               backgroundColor: LabColors.purple.withValues(alpha: 0.14),
-              child: const Icon(Icons.book, color: LabColors.purple, size: 18),
+              child: Icon(Icons.book, color: LabColors.purple.readable(context, ratio: 3), size: 18),
             ),
             title: Text(g.term,
                 style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700)),

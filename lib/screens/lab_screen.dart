@@ -6,6 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../app/theme.dart';
 import '../data/lab_examples.dart';
+import '../services/lab_draft_service.dart';
 import '../services/lab_engine.dart';
 import '../widgets/code_field.dart';
 
@@ -16,7 +17,16 @@ class LabScreen extends StatefulWidget {
   final String? initialCss;
   final String? initialJs;
 
-  const LabScreen({super.key, this.initialHtml, this.initialCss, this.initialJs});
+  /// Reprend et enregistre le code de l'utilisateur (onglet Lab).
+  final bool keepsDraft;
+
+  const LabScreen({
+    super.key,
+    this.initialHtml,
+    this.initialCss,
+    this.initialJs,
+    this.keepsDraft = false,
+  });
 
   @override
   State<LabScreen> createState() => _LabScreenState();
@@ -57,6 +67,27 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
   final FocusNode _cssFocus = FocusNode();
   final FocusNode _jsFocus = FocusNode();
 
+  /// Code de départ (exemple choisi ou code reçu) : sert à savoir si
+  /// l'utilisateur l'a modifié.
+  late LabCode _baseline;
+  String? _presetId;
+  int _pickerVersion = 0;
+  Timer? _saveTimer;
+  AppLifecycleListener? _lifecycle;
+
+  LabCode get _code =>
+      (html: _htmlController.text, css: _cssController.text, js: _jsController.text);
+
+  void _scheduleSave() {
+    _saveTimer?.cancel();
+    _saveTimer = Timer(const Duration(milliseconds: 500), _saveNow);
+  }
+
+  void _saveNow() {
+    _saveTimer?.cancel();
+    LabDraftService.instance.save(_code, _presetId);
+  }
+
   List<FocusNode> get _editorFocus => [_htmlFocus, _cssFocus, _jsFocus];
 
   final List<String> _logs = [];
@@ -70,9 +101,35 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _htmlController = TextEditingController(text: widget.initialHtml ?? labPresets.first.html);
-    _cssController = TextEditingController(text: widget.initialCss ?? labPresets.first.css);
-    _jsController = TextEditingController(text: widget.initialJs ?? labPresets.first.js);
+    final first = labPresets.first;
+    _baseline = (
+      html: widget.initialHtml ?? first.html,
+      css: widget.initialCss ?? first.css,
+      js: widget.initialJs ?? first.js,
+    );
+    var code = _baseline;
+    final hasInitialCode =
+        widget.initialHtml != null || widget.initialCss != null || widget.initialJs != null;
+    _presetId = hasInitialCode ? null : first.id;
+
+    final draft = widget.keepsDraft ? LabDraftService.instance.code : null;
+    if (draft != null) {
+      code = draft;
+      _presetId = LabDraftService.instance.presetId;
+      final preset = labPresets.where((p) => p.id == _presetId).firstOrNull;
+      if (preset == null) _presetId = null;
+      if (preset != null) _baseline = (html: preset.html, css: preset.css, js: preset.js);
+    }
+    _htmlController = TextEditingController(text: code.html);
+    _cssController = TextEditingController(text: code.css);
+    _jsController = TextEditingController(text: code.js);
+    if (widget.keepsDraft) {
+      for (final c in [_htmlController, _cssController, _jsController]) {
+        c.addListener(_scheduleSave);
+      }
+      // Enregistre aussitôt si l'application passe en arrière-plan.
+      _lifecycle = AppLifecycleListener(onInactive: _saveNow);
+    }
     for (final node in _editorFocus) {
       node.addListener(_onEditorFocusChange);
     }
@@ -140,15 +197,49 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
     }
   }
 
-  void _applyPreset(LabPreset preset) {
-    _htmlController.text = preset.html;
-    _cssController.text = preset.css;
-    _jsController.text = preset.js;
-    _run();
+  Future<void> _applyPreset(LabPreset preset) async {
+    if (_code != _baseline && !await _confirmReplace()) {
+      // Remet la liste sur l'exemple en cours.
+      if (mounted) setState(() => _pickerVersion++);
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      _presetId = preset.id;
+      _baseline = (html: preset.html, css: preset.css, js: preset.js);
+      _htmlController.text = preset.html;
+      _cssController.text = preset.css;
+      _jsController.text = preset.js;
+    });
+    await _run();
+  }
+
+  Future<bool> _confirmReplace() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remplacer votre code ?'),
+        content: const Text('Vous avez modifié le code du laboratoire. '
+            'Charger cet exemple effacera vos modifications.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Garder mon code'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Remplacer'),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
   }
 
   @override
   void dispose() {
+    if (widget.keepsDraft) _saveNow();
+    _lifecycle?.dispose();
     _tabController.dispose();
     _htmlController.dispose();
     _cssController.dispose();
@@ -195,7 +286,13 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
             if (showToolbar)
               SizedBox(
                 height: _toolbarHeight,
-                child: _Toolbar(running: _running, onRun: _run, onPreset: _applyPreset),
+                child: _Toolbar(
+                  key: ValueKey((_presetId, _pickerVersion)),
+                  presetId: _presetId,
+                  running: _running,
+                  onRun: _run,
+                  onPreset: _applyPreset,
+                ),
               ),
             // Le Flex change d'axe sans recréer la WebView.
             Expanded(
@@ -344,11 +441,18 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
 }
 
 class _Toolbar extends StatelessWidget {
+  final String? presetId;
   final bool running;
   final VoidCallback onRun;
   final ValueChanged<LabPreset> onPreset;
 
-  const _Toolbar({required this.running, required this.onRun, required this.onPreset});
+  const _Toolbar({
+    super.key,
+    required this.presetId,
+    required this.running,
+    required this.onRun,
+    required this.onPreset,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +462,8 @@ class _Toolbar extends StatelessWidget {
         children: [
           Expanded(
             child: DropdownButtonFormField<LabPreset>(
-              initialValue: labPresets.first,
+              initialValue: labPresets.where((p) => p.id == presetId).firstOrNull,
+              hint: const Text('Choisir…'),
               isExpanded: true,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -441,7 +546,7 @@ class _Console extends StatelessWidget {
                     padding: EdgeInsets.all(12),
                     child: Text(
                       'Console\n----------------\nLes messages console.log() et les erreurs s\'afficheront ici.',
-                      style: TextStyle(color: Colors.white38, fontSize: 12, fontFamily: 'monospace'),
+                      style: TextStyle(color: Colors.white60, fontSize: 12, fontFamily: 'monospace'),
                     ),
                   )
                 : ListView.builder(

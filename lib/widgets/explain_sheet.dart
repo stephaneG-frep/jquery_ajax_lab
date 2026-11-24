@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 import '../models/content_block.dart';
 import '../utils/explain_service.dart';
@@ -35,7 +36,7 @@ Future<void> showCodeExplanation(BuildContext context, CodeBlock block) {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  const Icon(Icons.auto_awesome, color: LabColors.purple),
+                  Icon(Icons.auto_awesome, color: LabColors.purple.readable(context, ratio: 3)),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
@@ -44,6 +45,7 @@ Future<void> showCodeExplanation(BuildContext context, CodeBlock block) {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'Fermer',
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
@@ -78,8 +80,10 @@ Future<void> showCodeExplanation(BuildContext context, CodeBlock block) {
                             alignment: Alignment.center,
                             child: Text(
                               '${i + 1}',
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w700, color: LabColors.seed),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: LabColors.seed.readable(context)),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -112,7 +116,7 @@ Future<void> showCodeExplanation(BuildContext context, CodeBlock block) {
                                   children: [
                                     Text('→ ',
                                         style: TextStyle(
-                                            color: LabColors.terminal,
+                                            color: LabColors.terminal.readable(context),
                                             fontWeight: FontWeight.w800)),
                                     Expanded(
                                       child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../data/app_data.dart';
 import '../models/project.dart';
 import '../services/progress_service.dart';
@@ -136,7 +137,7 @@ class _ProjectCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               if (done)
-                const Icon(Icons.check_circle, color: Colors.green)
+                Icon(Icons.check_circle, color: Colors.green.readable(context, ratio: 3))
               else
                 const Icon(Icons.chevron_right),
             ],

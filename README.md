@@ -43,7 +43,7 @@ flutter run            # sur un appareil/émulateur connecté
 
 ```bash
 flutter analyze        # aucun problème attendu
-flutter test           # 81 tests (données, validation, HTTP, widgets, lab)
+flutter test           # 97 tests (données, validation, HTTP, widgets, lab)
 ```
 
 ### Construire l'APK de production

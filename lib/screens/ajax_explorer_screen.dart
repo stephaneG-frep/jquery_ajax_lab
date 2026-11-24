@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 import '../services/http_service.dart';
 import '../widgets/code_field.dart';
@@ -66,7 +67,7 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
         setState(() {
           _loading = false;
           _failure = const HttpFailure(
-            title: 'Headers invalides',
+            title: 'En-têtes invalides',
             message: 'Les en-têtes doivent être au format JSON : {"Content-Type": "application/json"}',
           );
         });
@@ -130,7 +131,7 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
                   selected: selected,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: _methodColor(m),
+                    color: _methodColor(m).readable(context),
                     fontSize: 12.5,
                   ),
                   selectedColor: _methodColor(m).withValues(alpha: 0.2),
@@ -160,7 +161,7 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
             maxLines: 3,
             minLines: 2,
             decoration: const InputDecoration(
-              labelText: 'Headers (JSON)',
+              labelText: 'En-têtes / headers (JSON)',
               hintText: '{"Content-Type": "application/json"}',
               alignLabelWithHint: true,
             ),
@@ -173,7 +174,7 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
             maxLines: 4,
             minLines: 2,
             decoration: const InputDecoration(
-              labelText: 'Body (JSON)',
+              labelText: 'Corps / body (JSON)',
               hintText: '{"title": "Mon post"}',
               alignLabelWithHint: true,
             ),
@@ -284,14 +285,15 @@ class _ErrorCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red),
+          Icon(Icons.error_outline, color: Colors.red.readable(context, ratio: 3)),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(failure.title,
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.red)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800, color: Colors.red.readable(context))),
                 const SizedBox(height: 4),
                 Text(failure.message, style: const TextStyle(height: 1.4)),
               ],
@@ -322,9 +324,9 @@ class _ResultPanel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                'Status : ${result.statusCode} '
+                'Statut : ${result.statusCode} '
                 '${_statusText[result.statusCode] ?? ''}',
-                style: TextStyle(color: statusColor, fontWeight: FontWeight.w800),
+                style: TextStyle(color: statusColor.readable(context), fontWeight: FontWeight.w800),
               ),
             ),
             const SizedBox(width: 10),
@@ -338,7 +340,7 @@ class _ResultPanel extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        const Text('Headers', style: TextStyle(fontWeight: FontWeight.w800)),
+        const Text('En-têtes', style: TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.all(12),
@@ -363,7 +365,7 @@ class _ResultPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        const Text('Body', style: TextStyle(fontWeight: FontWeight.w800)),
+        const Text('Corps', style: TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 6),
         CodeView(code: result.prettyBody, language: 'json'),
       ],

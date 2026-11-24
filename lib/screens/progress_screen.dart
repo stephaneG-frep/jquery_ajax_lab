@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 import '../core/constants.dart';
@@ -66,7 +67,10 @@ class ProgressScreen extends StatelessWidget {
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                         ),
                         Text('${(globalRatio * 100).round()}%',
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: LabColors.seed)),
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: LabColors.seed.readable(context))),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -143,7 +147,10 @@ class ProgressScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 18),
+            Builder(
+              builder: (context) =>
+                  Icon(icon, color: color.readable(context, ratio: 3), size: 18),
+            ),
             const SizedBox(height: 6),
             Text('$value/$total',
                 style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app/app.dart';
 import 'services/favorites_service.dart';
+import 'services/lab_draft_service.dart';
 import 'services/progress_service.dart';
 import 'services/settings_service.dart';
 
@@ -10,5 +11,6 @@ Future<void> main() async {
   await AppSettings.instance.load();
   await ProgressService.instance.load();
   await FavoritesService.instance.load();
+  await LabDraftService.instance.load();
   runApp(const JqueryAjaxLabApp());
 }

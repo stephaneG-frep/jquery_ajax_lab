@@ -5,6 +5,7 @@ import '../models/course.dart';
 import '../models/exercise.dart';
 import '../models/project.dart';
 import '../models/snippet.dart';
+import '../utils/search_text.dart';
 import 'courses_ajax.dart';
 import 'courses_base.dart';
 import 'courses_jquery.dart';
@@ -88,64 +89,56 @@ class AppData {
   /// Nombre total de projets.
   static int get totalProjects => projects.length;
 
-  /// Résultat de recherche global.
+  /// Résultat de recherche global, sans doublon : les titres d'abord.
   static List<SearchResult> search(String query) {
-    final q = query.trim().toLowerCase();
+    final q = foldText(query.trim());
     if (q.isEmpty) return const [];
-
-    final results = <SearchResult>[];
-
-    for (final m in modules) {
-      if (_match(m.title, q) || _match(m.subtitle, q)) {
-        results.add(SearchResult.course(m));
-      }
-      for (final s in m.sections) {
-        if (_match(s.title, q)) {
-          results.add(SearchResult.section(s));
-        }
-        for (final b in s.blocks) {
-          if (b is CodeBlock && _match(b.code, q)) {
-            results.add(SearchResult.section(s));
-            break;
-          }
-        }
+    final inTitle = <SearchResult>[];
+    final inText = <SearchResult>[];
+    for (final entry in _searchIndex) {
+      if (entry.title.contains(q)) {
+        inTitle.add(entry.result);
+      } else if (entry.text.contains(q)) {
+        inText.add(entry.result);
       }
     }
-
-    for (final e in exercises) {
-      if (_match(e.title, q) ||
-          _match(e.objective, q) ||
-          _match(e.instructions, q) ||
-          _match(e.solution, q)) {
-        results.add(SearchResult.exercise(e));
-      }
-    }
-
-    for (final p in projects) {
-      if (_match(p.title, q) || _match(p.intro, q)) {
-        results.add(SearchResult.project(p));
-      }
-    }
-
-    for (final s in snippets) {
-      if (_match(s.name, q) ||
-          _match(s.description, q) ||
-          _match(s.example, q)) {
-        results.add(SearchResult.snippet(s));
-      }
-    }
-
-    for (final g in glossary) {
-      if (_match(g.term, q) || _match(g.definition, q)) {
-        results.add(SearchResult.glossary(g));
-      }
-    }
-
-    return results;
+    return [...inTitle, ...inText];
   }
 
-  static bool _match(String haystack, String needle) =>
-      haystack.toLowerCase().contains(needle);
+  /// Textes préparés une seule fois, au premier usage de la recherche.
+  static final List<({SearchResult result, String title, String text})> _searchIndex = [
+    for (final m in modules) ...[
+      _entry(SearchResult.course(m), [m.subtitle]),
+      for (final s in m.sections)
+        _entry(SearchResult.section(s), s.blocks.expand(_blockTexts)),
+    ],
+    for (final e in exercises)
+      _entry(SearchResult.exercise(e), [e.objective, e.instructions, e.solution]),
+    for (final p in projects) _entry(SearchResult.project(p), [p.intro]),
+    for (final s in snippets) _entry(SearchResult.snippet(s), [s.description, s.example]),
+    for (final g in glossary) _entry(SearchResult.glossary(g), [g.definition]),
+  ];
+
+  static ({SearchResult result, String title, String text}) _entry(
+          SearchResult result, Iterable<String> texts) =>
+      (result: result, title: foldText(result.title), text: foldText(texts.join('\n')));
+
+  static Iterable<String> _blockTexts(ContentBlock block) => switch (block) {
+        ParagraphBlock(:final text) ||
+        HeadingBlock(:final text) ||
+        TipBlock(:final text) ||
+        WarningBlock(:final text) ||
+        InfoBlock(:final text) =>
+          [text],
+        CodeBlock(:final code, :final explanation) => [code, ?explanation],
+        TableBlock(:final headers, :final rows) => [...headers, ...rows.expand((r) => r)],
+        ComparisonBlock(:final title, :final jquery, :final modern, :final note) =>
+          [title, jquery, modern, ?note],
+        StepsBlock(:final title, :final steps) => [?title, ...steps],
+        BulletsBlock(:final items) || NumbersBlock(:final items) => items,
+        ExerciseLinkBlock() => const [],
+        ConceptCardBlock(:final title, :final text) => [title, text],
+      };
 }
 
 /// Un résultat de recherche, avec un type pour la navigation.

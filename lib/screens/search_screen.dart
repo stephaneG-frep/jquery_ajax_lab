@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
+import '../widgets/snippet_sheet.dart';
 import '../data/app_data.dart';
 import '../services/progress_service.dart';
 import '../widgets/code_view.dart';
@@ -35,6 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final results = _results;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recherche'),
@@ -68,7 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                   child: Row(
                     children: [
-                      Text('${_results.length} résultat(s)',
+                      Text('${results.length} résultat(s)',
                           style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
                       const Spacer(),
                       Text('Glossaire',
@@ -82,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _results.isEmpty
+                  child: results.isEmpty
                       ? const EmptyState(
                           icon: Icons.search_off,
                           title: 'Aucun résultat',
@@ -90,9 +93,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                          itemCount: _results.length,
+                          itemCount: results.length,
                           itemBuilder: (context, i) {
-                            final r = _results[i];
+                            final r = results[i];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 8),
                               child: Card(
@@ -100,7 +103,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                   leading: CircleAvatar(
                                     backgroundColor: r.color.withValues(alpha: 0.14),
-                                    child: Icon(r.icon, color: r.color, size: 18),
+                                    child: Icon(r.icon, color: r.color.readable(context, ratio: 3), size: 18),
                                   ),
                                   title: Text(r.title,
                                       maxLines: 1,
@@ -142,35 +145,7 @@ class _SearchScreenState extends State<SearchScreen> {
       case SearchResultType.snippet:
         final s = AppData.snippetById(r.id.split(':').last);
         if (s == null) return;
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          showDragHandle: true,
-          builder: (context) => DraggableScrollableSheet(
-            initialChildSize: 0.6,
-            minChildSize: 0.4,
-            maxChildSize: 0.9,
-            expand: false,
-            builder: (context, controller) => ListView(
-              controller: controller,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              children: [
-                Text(s.name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 4),
-                Text(s.description, style: const TextStyle(height: 1.4)),
-                const SizedBox(height: 12),
-                const Text('Syntaxe', style: TextStyle(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                CodeView(code: s.syntax, language: 'syntaxe', compact: true),
-                const SizedBox(height: 12),
-                const Text('Exemple', style: TextStyle(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                CodeView(code: s.example, language: 'javascript', compact: true),
-              ],
-            ),
-          ),
-        );
+        showSnippetSheet(context, s);
       case SearchResultType.glossary:
         final term = r.id.split(':').last;
         final entry = AppData.glossary.where((g) => g.term == term).firstOrNull;

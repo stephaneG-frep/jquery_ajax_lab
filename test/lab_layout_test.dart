@@ -90,7 +90,7 @@ void main() {
     check(tester.widget(find.byType(TextField)));
 
     await tester.pumpWidget(const MaterialApp(home: AjaxExplorerScreen()));
-    for (final label in ['Headers (JSON)', 'Body (JSON)']) {
+    for (final label in ['En-têtes / headers (JSON)', 'Corps / body (JSON)']) {
       check(tester.widget(find.widgetWithText(TextField, label)));
     }
   });

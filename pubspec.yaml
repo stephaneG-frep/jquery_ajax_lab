@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Textes système (Retour, Copier, Coller…) en français.
+  flutter_localizations:
+    sdk: flutter
+
   cupertino_icons: ^1.0.8
 
   # Stockage local des réglages, de la progression et des favoris.

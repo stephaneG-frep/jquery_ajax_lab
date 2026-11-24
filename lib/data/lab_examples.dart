@@ -87,10 +87,11 @@ const List<LabPreset> labPresets = [
   e.preventDefault();
   var texte = \$("#tache").val().trim();
   if (texte === "") return;
-  \$("#liste").append(
-    '<li><span class="texte">' + texte + '</span> ' +
-    '<button class="supprimer">✕</button></li>'
-  );
+  // .text() : la saisie n'est jamais interprétée comme du HTML
+  var \$li = \$("<li>");
+  \$li.append(\$('<span class="texte">').text(texte));
+  \$li.append(' <button class="supprimer">✕</button>');
+  \$("#liste").append(\$li);
   \$("#tache").val("");
 });
 

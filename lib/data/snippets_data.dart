@@ -29,7 +29,7 @@ List<Snippet> allSnippets() => [
         icon: Icons.touch_app,
         description: 'Attache un gestionnaire d\'événement. Forme recommandée pour tout événement.',
         syntax: '\$( sélecteur ).on( événement, [cible], callback )',
-        example: '\$("#btn").on("click", function(){ … });',
+        example: '\$("#btn").on("click", function(){\n  \$(this).text("Cliqué !");\n});',
       ),
       const Snippet(
         id: 'snp-text',
@@ -273,7 +273,7 @@ List<Snippet> allSnippets() => [
         icon: Icons.upload,
         description: 'Raccourci pour une requête POST.',
         syntax: '\$.post( url, [données], [callback] )',
-        example: '\$.post("/api/users", { name: "Alice" }, function(r){ … });',
+        example: '\$.post("/api/users", { name: "Alice" }, function(r){\n  console.log(r);\n});',
       ),
       const Snippet(
         id: 'snp-each',
@@ -345,7 +345,7 @@ List<Snippet> allSnippets() => [
         icon: Icons.keyboard,
         description: 'Se déclenche quand une touche est relâchée.',
         syntax: '\$( champ ).keyup( callback )',
-        example: '\$("#recherche").on("keyup", function(){ … });',
+        example: '\$("#recherche").on("keyup", function(){\n  console.log(\$(this).val());\n});',
       ),
       const Snippet(
         id: 'snp-hover',

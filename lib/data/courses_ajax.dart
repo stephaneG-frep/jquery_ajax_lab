@@ -317,7 +317,7 @@ List<CourseModule> ajaxModules() => [
 \$.post('https://api.exemple.com/users', { name: 'Alice' });
 
 // PUT / PATCH / DELETE : via \$.ajax
-\$.ajax({ url: '.../users/1', method: 'PUT', data: { ... } });
+\$.ajax({ url: '.../users/1', method: 'PUT', data: { name: 'Alice', email: 'a@b.fr' } });
 \$.ajax({ url: '.../users/1', method: 'PATCH', data: { email: 'a@b.fr' } });
 \$.ajax({ url: '.../users/1', method: 'DELETE' });''',
                 explanation: 'Le verbe est passé à method dans \$.ajax().',

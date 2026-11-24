@@ -257,7 +257,7 @@ $('#menu').on('click', '.titre-menu', function () {
             title: 'Bloquer et valider',
             instruction: 'À la soumission, empêchez le rechargement puis vérifiez que nom et email '
                 'ne sont pas vides ; affichez une erreur sinon.',
-            hint: 'e.preventDefault() puis condition sur .val().',
+            hint: 'e.preventDefault() puis condition sur .val(). Affichez la saisie avec .text().',
             solution: r'''$('#form').on('submit', function (e) {
   e.preventDefault();
   if ($('#nom').val() === '' || $('#email').val() === '') {
@@ -265,9 +265,8 @@ $('#menu').on('click', '.titre-menu', function () {
     return;
   }
   $('#erreur').text('');
-  $('#resume').html(
-    '<b>' + $('#nom').val() + '</b> — ' + $('#email').val()
-  );
+  // .text() : la saisie n'est jamais interprétée comme du HTML
+  $('#resume').text($('#nom').val() + ' — ' + $('#email').val());
 });''',
           ),
           ProjectTask(
@@ -303,9 +302,8 @@ $('#form').on('submit', function (e) {
     return;
   }
   $('#erreur').text('');
-  $('#resume').html(
-    '<b>' + $('#nom').val() + '</b> — ' + $('#email').val()
-  );
+  // .text() : la saisie n'est jamais interprétée comme du HTML
+  $('#resume').text($('#nom').val() + ' — ' + $('#email').val());
 });
 
 $('#form input').on('keyup', function () {
@@ -340,15 +338,17 @@ $('#form input').on('keyup', function () {
             title: 'Ajouter une tâche',
             instruction: 'À la soumission, ajoutez un <li> avec le texte de la tâche et un bouton '
                 '.supprimer. Effacez le champ après ajout.',
-            hint: 'e.preventDefault() ; créez le <li> avec append() et un bouton en interne.',
+            hint: 'e.preventDefault() ; créez le <li> avec \$("<li>") et écrivez la saisie avec .text(), '
+                'jamais en collant du HTML : sinon un visiteur pourrait injecter du code.',
             solution: r'''$('#form').on('submit', function (e) {
   e.preventDefault();
   var texte = $('#tache').val().trim();
   if (texte === '') return;
-  $('#liste').append(
-    '<li><span class="texte">' + texte + '</span> ' +
-    '<button class="supprimer">✕</button></li>'
-  );
+  // .text() : la saisie n'est jamais interprétée comme du HTML
+  var $li = $('<li>');
+  $li.append($('<span class="texte">').text(texte));
+  $li.append(' <button class="supprimer">✕</button>');
+  $('#liste').append($li);
   $('#tache').val('');
 });''',
           ),
@@ -386,10 +386,11 @@ $('#form').on('submit', function (e) {
   e.preventDefault();
   var texte = $('#tache').val().trim();
   if (texte === '') return;
-  $('#liste').append(
-    '<li><span class="texte">' + texte + '</span> ' +
-    '<button class="supprimer">✕</button></li>'
-  );
+  // .text() : la saisie n'est jamais interprétée comme du HTML
+  var $li = $('<li>');
+  $li.append($('<span class="texte">').text(texte));
+  $li.append(' <button class="supprimer">✕</button>');
+  $('#liste').append($li);
   $('#tache').val('');
 });
 
@@ -863,7 +864,12 @@ chargerDashboard();''',
       '<b>' + users.length + '</b> utilisateurs · ' +
       '<b>' + faites + '</b> / <b>' + todos.length + '</b> tâches terminées'
     );
-    users.forEach(function (u) { … });
+    users.forEach(function (u) {
+      $('#liste').append(
+        '<li data-id="' + u.id + '"><b>' + u.name + '</b> — ' + u.email +
+        ' <button class="detail">Détail</button></li>'
+      );
+    });
     $('#etat').text('Tableau de bord à jour.');
   }).fail(function () { $('#etat').text('Erreur sur les tâches.'); });
 }).fail(function () { $('#etat').text('Erreur sur les utilisateurs.'); });''',

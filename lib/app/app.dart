@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/constants.dart';
 import '../services/settings_service.dart';
@@ -17,6 +18,9 @@ class JqueryAjaxLabApp extends StatelessWidget {
         return MaterialApp(
           title: AppInfo.name,
           debugShowCheckedModeBanner: false,
+          locale: const Locale('fr'),
+          supportedLocales: const [Locale('fr')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           theme: LabTheme.light(),
           darkTheme: LabTheme.dark(),
           themeMode: AppSettings.instance.flutterThemeMode,

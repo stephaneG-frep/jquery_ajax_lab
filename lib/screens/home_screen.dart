@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 import '../core/constants.dart';
@@ -389,7 +390,7 @@ class _QuickCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: color, size: 26),
+              Icon(icon, color: color.readable(context, ratio: 3), size: 26),
               const SizedBox(height: 10),
               Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800)),
               const SizedBox(height: 2),
@@ -429,7 +430,7 @@ class _ShortcutTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.15),
-          child: Icon(icon, color: color, size: 20),
+          child: Icon(icon, color: color.readable(context, ratio: 3), size: 20),
         ),
         title: Text(title, style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
@@ -455,14 +456,16 @@ class _QuoteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.format_quote, color: LabColors.amber),
+          Icon(Icons.format_quote, color: LabColors.amber.readable(context, ratio: 3)),
           const SizedBox(height: 6),
           Text(quote,
               style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, height: 1.4)),
           const SizedBox(height: 8),
-          const Text('Astuce du jour',
+          Text('Astuce du jour',
               style: TextStyle(
-                  fontSize: 11, fontWeight: FontWeight.w700, color: LabColors.amber)),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: LabColors.amber.readable(context))),
         ],
       ),
     );

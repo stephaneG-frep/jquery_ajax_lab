@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 import '../data/app_data.dart';
 import '../models/course.dart';
@@ -43,12 +44,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
           ),
           Expanded(
-            child: _showExercises
-                ? const _ExercisesList()
-                : ListenableBuilder(
-                    listenable: ProgressService.instance,
-                    builder: (context, _) => _ModulesList(),
-                  ),
+            child: ListenableBuilder(
+              listenable: ProgressService.instance,
+              // Sans const : les listes doivent être reconstruites à chaque progrès.
+              builder: (context, _) => _showExercises ? _ExercisesList() : _ModulesList(),
+            ),
           ),
         ],
       ),
@@ -70,7 +70,7 @@ class _ModulesList extends StatelessWidget {
             .where((s) => ProgressService.instance.isSectionComplete(s.id))
             .length;
         final ratio = module.sections.isEmpty ? 0.0 : done / module.sections.length;
-        final colors = _moduleColor(i);
+        final colors = _moduleColor(i).readable(context);
         return _ModuleCard(
           module: module,
           ratio: ratio,
@@ -182,8 +182,6 @@ class _ModuleCard extends StatelessWidget {
 }
 
 class _ExercisesList extends StatelessWidget {
-  const _ExercisesList();
-
   @override
   Widget build(BuildContext context) {
     final exercises = AppData.exercises;
@@ -200,7 +198,7 @@ class _ExercisesList extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             leading: CircleAvatar(
               backgroundColor: _levelColor(ex.level).withValues(alpha: 0.15),
-              child: Icon(_levelIcon(ex.level), size: 18, color: _levelColor(ex.level)),
+              child: Icon(_levelIcon(ex.level), size: 18, color: _levelColor(ex.level).readable(context, ratio: 3)),
             ),
             title: Text(ex.title, style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700)),
             subtitle: Text(
@@ -208,7 +206,7 @@ class _ExercisesList extends StatelessWidget {
               style: const TextStyle(fontSize: 12),
             ),
             trailing: isDone
-                ? const Icon(Icons.check_circle, color: Colors.green)
+                ? Icon(Icons.check_circle, color: Colors.green.readable(context, ratio: 3))
                 : const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => ExerciseDetailScreen(exercise: ex)),

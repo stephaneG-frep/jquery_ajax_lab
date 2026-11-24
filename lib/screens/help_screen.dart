@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 /// Mode d'emploi : présentation de l'application et de ses fonctionnalités.
@@ -153,7 +154,8 @@ class HelpScreen extends StatelessWidget {
               leading: CircleAvatar(
                 backgroundColor: LabColors.sky.withValues(alpha: 0.14),
                 child: Text('${i + 1}',
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: LabColors.sky)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800, color: LabColors.sky.readable(context))),
               ),
               title: Text(item.title,
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),

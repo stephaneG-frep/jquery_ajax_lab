@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 /// Barre de progression arrondie, réutilisée partout.
@@ -17,7 +18,7 @@ class LabProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? Theme.of(context).colorScheme.primary;
+    final c = (color ?? Theme.of(context).colorScheme.primary).readable(context, ratio: 3);
     return ClipRRect(
       borderRadius: BorderRadius.circular(height),
       child: LinearProgressIndicator(
@@ -56,7 +57,7 @@ class StatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 22),
+          Icon(icon, color: color.readable(context, ratio: 3), size: 22),
           const SizedBox(height: 8),
           Text(value,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
@@ -138,7 +139,7 @@ class SectionHeader extends StatelessWidget {
             color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: color, size: 22),
+          child: Icon(icon, color: color.readable(context, ratio: 3), size: 22),
         ),
         const SizedBox(width: 12),
         Expanded(

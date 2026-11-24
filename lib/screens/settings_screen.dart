@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 
 import '../core/constants.dart';
@@ -79,7 +80,8 @@ class SettingsScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   leading: CircleAvatar(
                     backgroundColor: Colors.red.withValues(alpha: 0.14),
-                    child: const Icon(Icons.restart_alt, color: Colors.red, size: 18),
+                    child: Icon(Icons.restart_alt,
+                        color: Colors.red.readable(context, ratio: 3), size: 18),
                   ),
                   title: const Text('Réinitialiser toute la progression',
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
@@ -128,7 +130,10 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: color, size: 20),
+                Builder(
+                  builder: (context) =>
+                      Icon(icon, color: color.readable(context, ratio: 3), size: 20),
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(title,
@@ -161,7 +166,10 @@ class SettingsScreen extends StatelessWidget {
             child: const Text('Annuler'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Réinitialiser'),
           ),

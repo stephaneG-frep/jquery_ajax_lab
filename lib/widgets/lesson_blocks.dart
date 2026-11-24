@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
 import '../app/theme.dart';
 import '../models/content_block.dart';
 import 'code_view.dart';
@@ -169,7 +170,7 @@ class _Box extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 20),
+          Icon(icon, color: color.readable(context, ratio: 3), size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -177,7 +178,9 @@ class _Box extends StatelessWidget {
               children: [
                 Text(title,
                     style: TextStyle(
-                        color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+                        color: color.readable(context),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13)),
                 const SizedBox(height: 4),
                 InlineText(text,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.5)),
@@ -301,7 +304,7 @@ class _CompareTag extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(label,
-              style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+              style: TextStyle(color: color.readable(context), fontSize: 11, fontWeight: FontWeight.w700)),
         ),
       ],
     );
@@ -408,7 +411,7 @@ class _ExerciseCta extends StatelessWidget {
     return Card(
       color: LabColors.seed.withValues(alpha: 0.08),
       child: ListTile(
-        leading: const Icon(Icons.fitness_center, color: LabColors.seed),
+        leading: Icon(Icons.fitness_center, color: LabColors.seed.readable(context, ratio: 3)),
         title: const Text('Exercice lié',
             style: TextStyle(fontWeight: FontWeight.w700)),
         subtitle: const Text('Mettez cette notion en pratique.'),

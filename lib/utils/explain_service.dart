@@ -17,10 +17,16 @@ class ExplainService {
     }
 
     final result = <CodeLineExplanation>[];
+    var inScript = false; // bloc <script> dans du HTML
     for (final raw in code.split('\n')) {
       final line = raw.trim();
       if (line.isEmpty) continue;
-      result.add(CodeLineExplanation(line: line, explanation: _explainLine(line, language)));
+      if (line.startsWith('</script')) inScript = false;
+      result.add(CodeLineExplanation(
+        line: line,
+        explanation: _explainLine(line, inScript ? 'javascript' : language),
+      ));
+      if (line.startsWith('<script') && !line.contains('</script')) inScript = true;
     }
     return result;
   }

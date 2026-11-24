@@ -45,6 +45,7 @@ class StorageKeys {
   static const String settingsCodeSize = 'settings.codeSize';
   static const String progressJson = 'progress.data';
   static const String favoritesJson = 'favorites.data';
+  static const String labDraftJson = 'lab.draft';
 }
 
 /// Catégories de progression affichées dans l'écran Progression.

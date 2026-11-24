@@ -77,7 +77,7 @@ class _AppShellState extends State<AppShell> {
         children: [
           HomeScreen(onNavigate: _selectTab),
           const CoursesScreen(),
-          const LabScreen(),
+          const LabScreen(keepsDraft: true),
           const ProjectsScreen(),
           const DocsScreen(),
         ],

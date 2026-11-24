@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
+import '../widgets/favorite_button.dart';
 import '../models/exercise.dart';
 import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
@@ -64,9 +66,10 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
     });
     if (valid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✓ Correct ! Exercice réussi.'),
-          backgroundColor: Colors.green,
+        SnackBar(
+          content: const Text('✓ Correct ! Exercice réussi.',
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.green.shade800,
         ),
       );
     }
@@ -90,17 +93,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
       appBar: AppBar(
         title: const Text('Exercice'),
         actions: [
-          ListenableBuilder(
-            listenable: FavoritesService.instance,
-            builder: (context, _) {
-              final fav = FavoritesService.instance.isFavorite(FavoriteKind.exercise, ex.id);
-              return IconButton(
-                tooltip: fav ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                icon: Icon(fav ? Icons.star : Icons.star_border, color: fav ? Colors.amber : null),
-                onPressed: () => FavoritesService.instance.toggle(FavoriteKind.exercise, ex.id),
-              );
-            },
-          ),
+          FavoriteButton(kind: FavoriteKind.exercise, id: ex.id),
         ],
       ),
       body: ListenableBuilder(
@@ -121,7 +114,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                     visualDensity: VisualDensity.compact,
                   ),
                   if (isDone)
-                    const Icon(Icons.check_circle, color: Colors.green),
+                    Icon(Icons.check_circle, color: Colors.green.readable(context, ratio: 3)),
                 ],
               ),
               const SizedBox(height: 14),
@@ -284,7 +277,7 @@ class _LevelBadge extends StatelessWidget {
       ),
       child: Text(level.label,
           style: TextStyle(
-              color: color, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+              color: color.readable(context), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
     );
   }
 }
@@ -307,7 +300,7 @@ class _HintBox extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb, color: Colors.orange, size: 18),
+          Icon(Icons.lightbulb, color: Colors.orange.readable(context, ratio: 3), size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text('Indice $index : $text', style: const TextStyle(height: 1.4)),
@@ -336,8 +329,9 @@ class _SolutionBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Solution',
-              style: TextStyle(fontWeight: FontWeight.w800, color: Colors.green)),
+          Text('Solution',
+              style: TextStyle(
+                  fontWeight: FontWeight.w800, color: Colors.green.readable(context))),
           const SizedBox(height: 10),
           CodeView(code: exercise.solution, language: 'javascript', compact: true),
           const SizedBox(height: 10),
@@ -377,7 +371,7 @@ class _FeedbackBox extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(valid ? Icons.check_circle : Icons.error_outline, color: color, size: 22),
+          Icon(valid ? Icons.check_circle : Icons.error_outline, color: color.readable(context, ratio: 3), size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

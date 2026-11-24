@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
+import '../widgets/snippet_sheet.dart';
 import '../app/theme.dart';
 import '../data/app_data.dart';
 import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
-import '../widgets/code_view.dart';
 import '../widgets/kit.dart';
 import 'course_detail_screen.dart';
 import 'exercise_detail_screen.dart';
@@ -143,7 +144,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.14),
-          child: Icon(icon, color: color, size: 18),
+          child: Icon(icon, color: color.readable(context, ratio: 3), size: 18),
         ),
         title: Text(title,
             maxLines: 1,
@@ -152,7 +153,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
         trailing: IconButton(
           tooltip: 'Retirer des favoris',
-          icon: const Icon(Icons.star, color: Colors.amber),
+          icon: Icon(Icons.star, color: Colors.amber.readable(context, ratio: 3)),
           onPressed: onRemove,
         ),
         onTap: onTap,
@@ -213,34 +214,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   void _showSnippet(String id) {
     final s = AppData.snippetById(id);
     if (s == null) return;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, controller) => ListView(
-          controller: controller,
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-          children: [
-            Text(s.name,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 4),
-            Text(s.description, style: const TextStyle(height: 1.4)),
-            const SizedBox(height: 12),
-            const Text('Syntaxe', style: TextStyle(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            CodeView(code: s.syntax, language: 'syntaxe', compact: true),
-            const SizedBox(height: 12),
-            const Text('Exemple', style: TextStyle(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            CodeView(code: s.example, language: 'javascript', compact: true),
-          ],
-        ),
-      ),
-    );
+    showSnippetSheet(context, s);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/favorite_button.dart';
 import '../data/app_data.dart';
 import '../models/course.dart';
 import '../services/favorites_service.dart';
@@ -28,17 +29,7 @@ class _SectionScreenState extends State<SectionScreen> {
       appBar: AppBar(
         title: const Text('Leçon'),
         actions: [
-          ListenableBuilder(
-            listenable: FavoritesService.instance,
-            builder: (context, _) {
-              final fav = FavoritesService.instance.isFavorite(FavoriteKind.section, section.id);
-              return IconButton(
-                tooltip: fav ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                icon: Icon(fav ? Icons.star : Icons.star_border, color: fav ? Colors.amber : null),
-                onPressed: () => FavoritesService.instance.toggle(FavoriteKind.section, section.id),
-              );
-            },
-          ),
+          FavoriteButton(kind: FavoriteKind.section, id: section.id),
         ],
       ),
       body: ListenableBuilder(

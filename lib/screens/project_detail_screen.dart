@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
+import '../widgets/favorite_button.dart';
 import '../models/project.dart';
 import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
@@ -43,17 +45,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       appBar: AppBar(
         title: const Text('Projet'),
         actions: [
-          ListenableBuilder(
-            listenable: FavoritesService.instance,
-            builder: (context, _) {
-              final fav = FavoritesService.instance.isFavorite(FavoriteKind.project, project.id);
-              return IconButton(
-                tooltip: fav ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                icon: Icon(fav ? Icons.star : Icons.star_border, color: fav ? Colors.amber : null),
-                onPressed: () => FavoritesService.instance.toggle(FavoriteKind.project, project.id),
-              );
-            },
-          ),
+          FavoriteButton(kind: FavoriteKind.project, id: project.id),
         ],
       ),
       body: ListenableBuilder(
@@ -94,7 +86,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                     ),
                   ),
                   if (isDone)
-                    const Icon(Icons.check_circle, color: Colors.green),
+                    Icon(Icons.check_circle, color: Colors.green.readable(context, ratio: 3)),
                 ],
               ),
               const SizedBox(height: 16),

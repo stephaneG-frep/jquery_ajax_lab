@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app/readable_color.dart';
+import '../widgets/favorite_button.dart';
 import '../app/theme.dart';
 import '../data/app_data.dart';
 import '../models/course.dart';
@@ -31,7 +33,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       LabColors.sky,
       LabColors.terminal,
     ];
-    return palette[index % palette.length];
+    return palette[index % palette.length].readable(context);
   }
 
   @override
@@ -43,17 +45,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       appBar: AppBar(
         title: Text('Module ${module.number}'),
         actions: [
-          ListenableBuilder(
-            listenable: FavoritesService.instance,
-            builder: (context, _) {
-              final fav = FavoritesService.instance.isFavorite(FavoriteKind.course, module.id);
-              return IconButton(
-                tooltip: fav ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                icon: Icon(fav ? Icons.star : Icons.star_border, color: fav ? Colors.amber : null),
-                onPressed: () => FavoritesService.instance.toggle(FavoriteKind.course, module.id),
-              );
-            },
-          ),
+          FavoriteButton(kind: FavoriteKind.course, id: module.id),
         ],
       ),
       body: ListenableBuilder(
@@ -151,7 +143,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         subtitle: Text('${ex.level.label} · ${ex.category}',
                             style: const TextStyle(fontSize: 12)),
                         trailing: ProgressService.instance.isExercisePassed(ex.id)
-                            ? const Icon(Icons.check_circle, color: Colors.green)
+                            ? Icon(Icons.check_circle, color: Colors.green.readable(context, ratio: 3))
                             : const Icon(Icons.chevron_right),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => ExerciseDetailScreen(exercise: ex)),
@@ -201,7 +193,7 @@ class _SectionTile extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: done
-                    ? const Icon(Icons.check, color: Colors.green, size: 20)
+                    ? Icon(Icons.check, color: Colors.green.readable(context, ratio: 3), size: 20)
                     : Text('$number',
                         style: TextStyle(fontWeight: FontWeight.w800, color: color)),
               ),
