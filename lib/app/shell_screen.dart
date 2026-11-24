@@ -49,7 +49,11 @@ class _AppShellState extends State<AppShell> {
                 color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: const Icon(Icons.code, color: Colors.white, size: 18),
+              child: Icon(
+                Icons.code,
+                color: Theme.of(context).colorScheme.onPrimary,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 10),
             Text(_titles[_index]),

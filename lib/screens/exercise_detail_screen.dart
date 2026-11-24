@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/exercise.dart';
 import '../services/favorites_service.dart';
 import '../services/progress_service.dart';
-import '../services/settings_service.dart';
+import '../widgets/code_field.dart';
 import '../widgets/code_view.dart';
 import 'lab_screen.dart';
 
@@ -174,14 +174,10 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                       color: Theme.of(context).colorScheme.outlineVariant,
                     ),
                   ),
-                  child: TextField(
+                  child: CodeField(
                     controller: _answer,
                     maxLines: 8,
                     minLines: 4,
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: AppSettings.instance.codeFontSize,
-                    ),
                     decoration: const InputDecoration(
                       hintText: '// écrivez votre code ici',
                       border: InputBorder.none,

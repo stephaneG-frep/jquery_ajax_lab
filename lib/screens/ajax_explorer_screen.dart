@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../app/theme.dart';
 import '../services/http_service.dart';
-import '../services/settings_service.dart';
+import '../widgets/code_field.dart';
 import '../widgets/code_view.dart';
 
 const Map<int, String> _statusText = {
@@ -145,6 +145,7 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
           TextField(
             controller: _url,
             keyboardType: TextInputType.url,
+            autocorrect: false,
             decoration: const InputDecoration(
               labelText: 'URL',
               hintText: 'https://jsonplaceholder.typicode.com/users',
@@ -154,14 +155,10 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
           const SizedBox(height: 12),
 
           // Headers
-          TextField(
+          CodeField(
             controller: _headers,
             maxLines: 3,
             minLines: 2,
-            style: TextStyle(
-              fontFamily: 'monospace',
-              fontSize: AppSettings.instance.codeFontSize,
-            ),
             decoration: const InputDecoration(
               labelText: 'Headers (JSON)',
               hintText: '{"Content-Type": "application/json"}',
@@ -171,14 +168,10 @@ class _AjaxExplorerScreenState extends State<AjaxExplorerScreen> {
           const SizedBox(height: 12),
 
           // Body
-          TextField(
+          CodeField(
             controller: _body,
             maxLines: 4,
             minLines: 2,
-            style: TextStyle(
-              fontFamily: 'monospace',
-              fontSize: AppSettings.instance.codeFontSize,
-            ),
             decoration: const InputDecoration(
               labelText: 'Body (JSON)',
               hintText: '{"title": "Mon post"}',

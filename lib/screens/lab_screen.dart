@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -6,7 +7,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../app/theme.dart';
 import '../data/lab_examples.dart';
 import '../services/lab_engine.dart';
-import '../services/settings_service.dart';
+import '../widgets/code_field.dart';
 
 /// Le laboratoire interactif : éditeur HTML/CSS/JS, exécution dans une
 /// WebView sécurisée et console pédagogique.
@@ -52,6 +53,11 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
   late final TextEditingController _htmlController;
   late final TextEditingController _cssController;
   late final TextEditingController _jsController;
+  final FocusNode _htmlFocus = FocusNode();
+  final FocusNode _cssFocus = FocusNode();
+  final FocusNode _jsFocus = FocusNode();
+
+  List<FocusNode> get _editorFocus => [_htmlFocus, _cssFocus, _jsFocus];
 
   final List<String> _logs = [];
   bool _consoleVisible = true;
@@ -67,7 +73,15 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
     _htmlController = TextEditingController(text: widget.initialHtml ?? labPresets.first.html);
     _cssController = TextEditingController(text: widget.initialCss ?? labPresets.first.css);
     _jsController = TextEditingController(text: widget.initialJs ?? labPresets.first.js);
+    for (final node in _editorFocus) {
+      node.addListener(_onEditorFocusChange);
+    }
     _bootstrapWebview();
+  }
+
+  // La place de l'éditeur et de l'aperçu dépend de celui qu'on utilise.
+  void _onEditorFocusChange() {
+    if (mounted) setState(() {});
   }
 
   Future<void> _bootstrapWebview() async {
@@ -139,152 +153,190 @@ class _LabScreenState extends State<LabScreen> with SingleTickerProviderStateMix
     _htmlController.dispose();
     _cssController.dispose();
     _jsController.dispose();
+    for (final node in _editorFocus) {
+      node.dispose();
+    }
     super.dispose();
   }
 
+  // Hauteurs minimales (toutes parties visibles : 72 + 150 + 30 + 70 + 110).
+  static const double _toolbarHeight = 72;
+  static const double _previewBarHeight = 30;
+  static const double _previewMinHeight = 70;
+  static const double _compactBelow = 432;
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final maxHeight = constraints.maxHeight;
-        final editorHeight = (maxHeight * 0.34).clamp(150.0, 240.0);
-        final consoleHeight = (maxHeight * 0.22).clamp(110.0, 190.0);
-        final hasWeb = _webController != null;
-        final webUnavailable = WebViewPlatform.instance == null;
+        final height = constraints.maxHeight;
+        final width = constraints.maxWidth;
+        // Peu de hauteur : clavier ouvert ou téléphone en paysage.
+        final compact = height < _compactBelow;
+        final sideBySide = compact && width >= 600;
+        final showToolbar = height >= 170;
+        final body = height - (showToolbar ? _toolbarHeight : 0);
+
+        // Place restante pour l'éditeur en gardant un aperçu visible.
+        final room = math.max(0.0, body - _previewBarHeight - _previewMinHeight);
+        final double editorHeight;
+        if (!compact) {
+          editorHeight = (height * 0.34).clamp(150.0, 240.0);
+        } else if (_editorFocus.any((node) => node.hasFocus)) {
+          editorHeight = room;
+        } else if (View.of(context).viewInsets.bottom > 0) {
+          editorHeight = 0; // On écrit dans l'aperçu : il prend toute la place.
+        } else {
+          editorHeight = room * 0.5;
+        }
 
         return Column(
           children: [
-            _Toolbar(
-              running: _running,
-              onRun: _run,
-              onPreset: _applyPreset,
-            ),
-            SizedBox(
-              height: editorHeight,
-              child: Column(
+            if (showToolbar)
+              SizedBox(
+                height: _toolbarHeight,
+                child: _Toolbar(running: _running, onRun: _run, onPreset: _applyPreset),
+              ),
+            // Le Flex change d'axe sans recréer la WebView.
+            Expanded(
+              child: Flex(
+                direction: sideBySide ? Axis.horizontal : Axis.vertical,
                 children: [
-                  Material(
-                    color: isDark ? const Color(0xFF1A1B27) : Colors.white,
-                    child: TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      tabAlignment: TabAlignment.start,
-                      labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-                      tabs: const [
-                        Tab(text: 'HTML'),
-                        Tab(text: 'CSS'),
-                        Tab(text: 'JS / jQuery'),
-                      ],
-                    ),
+                  SizedBox(
+                    height: sideBySide ? body : editorHeight,
+                    width: sideBySide ? width / 2 : width,
+                    child: _editors(sideBySide ? body : editorHeight),
                   ),
                   Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
+                    child: Column(
                       children: [
-                        _codeField(_htmlController, language: 'html', key: const ValueKey('html')),
-                        _codeField(_cssController, language: 'css', key: const ValueKey('css')),
-                        _codeField(_jsController, language: 'javascript', key: const ValueKey('js')),
+                        if (!sideBySide || body >= _previewBarHeight + 40)
+                          _previewBar(showConsoleButton: !compact),
+                        Expanded(child: _preview()),
+                        if (_consoleVisible && !compact)
+                          SizedBox(
+                            height: (height * 0.22).clamp(110.0, 190.0),
+                            child: _Console(logs: _logs, onClear: () => setState(_logs.clear)),
+                          ),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              color: isDark ? const Color(0xFF1E2130) : const Color(0xFFE9EDF5),
-              child: Row(
-                children: [
-                  const Icon(Icons.visibility_outlined, size: 14),
-                  const SizedBox(width: 6),
-                  const Text('Aperçu',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-                  const Spacer(),
-                  if (_running) ...[
-                    const SizedBox(
-                        width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
-                    const SizedBox(width: 6),
-                  ],
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    tooltip: 'Basculer la console',
-                    icon: const Icon(Icons.terminal, size: 16),
-                    onPressed: () => setState(() => _consoleVisible = !_consoleVisible),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: hasWeb
-                  ? WebViewWidget(controller: _webController!)
-                  : webUnavailable
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.visibility_off, size: 36),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  'Aperçu indisponible',
-                                  style: TextStyle(fontWeight: FontWeight.w700),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'La WebView n\'est pas disponible ici.\n'
-                                  'Utilisez l\'application sur un appareil Android pour voir l\'aperçu.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : const Center(child: CircularProgressIndicator()),
-            ),
-            if (_consoleVisible)
-              SizedBox(
-                height: consoleHeight,
-                child: _Console(logs: _logs, onClear: () => setState(_logs.clear)),
-              ),
           ],
         );
       },
     );
   }
 
-  Widget _codeField(TextEditingController controller,
-      {required String language, Key? key}) {
+  Widget _editors(double height) {
+    if (height <= 0) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      children: [
+        // Très peu de place : on garde le champ plutôt que les onglets.
+        if (height >= 100)
+          Material(
+            color: isDark ? const Color(0xFF1A1B27) : Colors.white,
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              tabs: const [
+                Tab(text: 'HTML'),
+                Tab(text: 'CSS'),
+                Tab(text: 'JS / jQuery'),
+              ],
+            ),
+          ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _codeField(_htmlController, _htmlFocus),
+              _codeField(_cssController, _cssFocus),
+              _codeField(_jsController, _jsFocus),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _previewBar({required bool showConsoleButton}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      key: key,
-      color: Theme.of(context).brightness == Brightness.dark
-          ? CodeDarkColors.background
-          : CodeLightColors.background,
-      child: ListenableBuilder(
-        listenable: AppSettings.instance,
-        builder: (context, _) => TextField(
-          controller: controller,
-          maxLines: null,
-          expands: true,
-          textAlignVertical: TextAlignVertical.top,
-          style: TextStyle(
-            fontFamily: 'monospace',
-            fontSize: AppSettings.instance.codeFontSize,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? CodeDarkColors.text
-                : CodeLightColors.text,
-          ),
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.all(12),
-            hintText: '// écrivez votre code…',
-          ),
+      height: _previewBarHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      color: isDark ? const Color(0xFF1E2130) : const Color(0xFFE9EDF5),
+      child: Row(
+        children: [
+          const Icon(Icons.visibility_outlined, size: 14),
+          const SizedBox(width: 6),
+          const Text('Aperçu', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+          const Spacer(),
+          if (_running) ...[
+            const SizedBox(
+                width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+            const SizedBox(width: 6),
+          ],
+          if (showConsoleButton)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: 'Basculer la console',
+              icon: const Icon(Icons.terminal, size: 16),
+              onPressed: () => setState(() => _consoleVisible = !_consoleVisible),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _preview() {
+    final controller = _webController;
+    if (controller != null) return WebViewWidget(controller: controller);
+    if (WebViewPlatform.instance != null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            const Icon(Icons.visibility_off, size: 36),
+            const SizedBox(height: 10),
+            const Text('Aperçu indisponible', style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            Text(
+              'La WebView n\'est pas disponible ici.\n'
+              'Utilisez l\'application sur un appareil Android pour voir l\'aperçu.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _codeField(TextEditingController controller, FocusNode focusNode) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      color: isDark ? CodeDarkColors.background : CodeLightColors.background,
+      child: CodeField(
+        controller: controller,
+        focusNode: focusNode,
+        expands: true,
+        color: isDark ? CodeDarkColors.text : CodeLightColors.text,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(12),
+          hintText: '// écrivez votre code…',
         ),
       ),
     );

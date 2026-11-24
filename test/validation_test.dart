@@ -152,6 +152,14 @@ void main() {
     }
   });
 
+  test('une majuscule ajoutée par le clavier est signalée', () {
+    final e = AppData.exerciseById('ex-json-1')!;
+    final result = e.validate('Console.log(data.name);');
+    expect(result.valid, isFalse);
+    expect(result.feedback, contains('majuscule'));
+    expect(AppData.exerciseById('ex-json-4')!.validate('JSON.parse(texte)').valid, isTrue);
+  });
+
   test('JsText distingue commentaires et URL', () {
     expect(JsText.canonical("get( 'https://a.fr' ) // fin"), "get('https://a.fr')");
     expect(JsText.canonical("f(x) { // début\n  g('a'); }"), "f(x){g('a');}");

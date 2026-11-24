@@ -128,7 +128,7 @@ class _WelcomeHeader extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [scheme.primary, scheme.primary.withValues(alpha: 0.75)],
+          colors: [scheme.primary, scheme.primary.withValues(alpha: 0.9)],
         ),
         borderRadius: BorderRadius.circular(22),
       ),
@@ -141,35 +141,35 @@ class _WelcomeHeader extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: scheme.onPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.code, color: Colors.white),
+                child: Icon(Icons.code, color: scheme.onPrimary),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'jQuery AJAX Lab',
                       style: TextStyle(
-                          color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+                          color: scheme.onPrimary, fontSize: 20, fontWeight: FontWeight.w800),
                     ),
                     Text(
                       'De zéro à expert du Web',
-                      style: TextStyle(color: Colors.white70, fontSize: 12.5),
+                      style: TextStyle(color: scheme.onPrimary, fontSize: 12.5),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.language, color: Colors.white54),
+              Icon(Icons.language, color: scheme.onPrimary.withValues(alpha: 0.6)),
             ],
           ),
           const SizedBox(height: 14),
           Text(
             _sentence,
-            style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.4),
+            style: TextStyle(color: scheme.onPrimary, fontSize: 14.5, height: 1.4),
           ),
           const SizedBox(height: 14),
           Wrap(
@@ -202,18 +202,19 @@ class _HeaderChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.18),
+          color: onPrimary.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(label,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+            style: TextStyle(
+                color: onPrimary, fontSize: 12.5, fontWeight: FontWeight.w700)),
       ),
     );
   }

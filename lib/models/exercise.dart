@@ -126,9 +126,21 @@ class Exercise {
       final ok = code == JsText.canonical(solution);
       return (valid: ok, feedback: ok ? null : 'Comparez votre réponse avec la solution proposée.');
     }
-    return r.accepts(code)
-        ? (valid: true, feedback: null)
-        : (valid: false, feedback: r.feedback);
+    if (r.accepts(code)) return (valid: true, feedback: null);
+
+    // Certains claviers imposent une majuscule en début de ligne.
+    final lowered = answer.replaceAllMapped(
+      RegExp(r'^\s*[A-Z]', multiLine: true),
+      (m) => m[0]!.toLowerCase(),
+    );
+    if (r.accepts(JsText.canonical(lowered))) {
+      return (
+        valid: false,
+        feedback: 'Presque ! Une majuscule s\'est glissée en début de ligne (parfois ajoutée par '
+            'le clavier) : JavaScript distingue majuscules et minuscules.',
+      );
+    }
+    return (valid: false, feedback: r.feedback);
   }
 
   /// Vérifie la réponse d'un exercice à choix multiple.
