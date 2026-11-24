@@ -1,0 +1,35 @@
+name: jquery_ajax_lab
+description: "jQuery AJAX Lab – une application éducative Flutter pour apprendre le Web, jQuery, AJAX, HTTP, JSON et les API REST."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Stockage local des réglages, de la progression et des favoris.
+  shared_preferences: ^2.3.4
+
+  # Requêtes HTTP réelles pour l'explorateur AJAX.
+  http: ^1.3.0
+
+  # Affichage et exécution des pages Web du laboratoire.
+  webview_flutter: ^4.10.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/vendor/jquery/jquery-3.7.1.min.js
+    - assets/lab/
